@@ -30,3 +30,6 @@ gen
 dist
 package-lock.json
 yarn.lock
+
+# local env files
+.env

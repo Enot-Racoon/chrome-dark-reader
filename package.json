@@ -1,26 +1,25 @@
 {
   "name": "chrome-dark-reader",
-  "version": "0.1.0",
+  "version": "0.0.22",
+  "description": "Chrome Dark Reader. Reading comfortably with inverted brightness but preserved hue",
+  "main": "index.js",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^27.5.2",
-    "@types/node": "^16.18.23",
-    "@types/react": "^18.0.35",
-    "@types/react-dom": "^18.0.11",
+    "daisyui": "^2.51.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-scripts": "5.0.1",
-    "typescript": "^4.9.5",
+    "react-scripts": "^5.0.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "dev": "react-scripts start",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "build": "npm-run-all build:clean && react-scripts build && bump-build-version",
+    "build:all": "npm-run-all build:clean build:start bump-build-version",
+    "build:clean": "rimraf ./dist",
+    "build:start": "webpack --config scripts/webpack.config.js",
+    "build:style": "npx tailwindcss -i ./src/style.css -o ./dist/style.css --minify",
+    "bump-build-version": "node ./scripts/bump-build-version.js"
   },
   "eslintConfig": {
     "extends": [
@@ -41,10 +40,27 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/chrome": "^0.0.231",
+    "@types/jest": "^27.5.2",
+    "@types/node": "^16.18.23",
+    "@types/react": "^18.0.35",
+    "@types/react-dom": "^18.0.11",
     "@typescript-eslint/eslint-plugin": "^5.58.0",
     "@typescript-eslint/parser": "^5.58.0",
+    "autoprefixer": "^10.4.14",
     "eslint": "^8.38.0",
     "eslint-plugin-react": "^7.32.2",
-    "prettier": "2.8.7"
+    "npm-run-all": "^4.1.5",
+    "postcss": "^8.4.21",
+    "postcss-import": "^15.1.0",
+    "postcss-loader": "^7.2.4",
+    "postcss-nesting": "^11.2.2",
+    "postcss-preset-env": "^8.3.1",
+    "prettier": "2.8.7",
+    "rimraf": "^5.0.0",
+    "tailwindcss": "^3.3.1"
   }
 }
