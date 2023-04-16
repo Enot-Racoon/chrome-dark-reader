@@ -13,10 +13,10 @@
   "scripts": {
     "dev": "react-app-rewired start",
     "test": "react-app-rewired test",
-    "build": "npm-run-all build:clean && react-app-rewired build",
-    "build:all": "npm-run-all build:clean build:start bump-build-version",
-    "build:clean": "rimraf ./dist",
-    "build:start": "webpack --config scripts/webpack.config.js",
+    "build": "npm-run-all build:clean build:react bump-build-version build:after",
+    "build:react": "react-app-rewired build",
+    "build:after": "rimraf build/static/js/*.LICENSE.txt",
+    "build:clean": "rimraf dist",
     "build:style": "npx tailwindcss -i ./src/style.css -o ./dist/style.css --minify",
     "bump-build-version": "node ./scripts/bump-build-version.js"
   },

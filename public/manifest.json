@@ -3,9 +3,9 @@
   "description": "Reading comfortably with inverted brightness but preserved hue",
   "manifest_version": 3,
   "icons": {
-    "16": "logo/logo-16.png",
-    "48": "logo/logo-48.png",
-    "128": "logo/logo-128.png"
+    "16": "static/logo/logo-16.png",
+    "48": "static/logo/logo-48.png",
+    "128": "static/logo/logo-128.png"
   },
   "background": {
     "service_worker": "background.js"
@@ -18,12 +18,25 @@
   "content_scripts": [
     {
       "all_frames": true,
-      "js": ["foreground.js"],
-      "matches": ["http://*/*", "https://*/*", "ftp://*/*", "file://*"],
+      "js": [
+        "foreground.js"
+      ],
+      "matches": [
+        "http://*/*",
+        "https://*/*",
+        "ftp://*/*",
+        "file://*"
+      ],
       "run_at": "document_start"
     }
   ],
-  "permissions": ["activeTab", "scripting", "storage"],
-  "host_permissions": ["*://*/*"],
-  "version": "0.0.0.4200"
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "*://*/*"
+  ],
+  "version": "0.0.22.4203"
 }
