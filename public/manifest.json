@@ -8,18 +8,18 @@
     "128": "static/logo/logo-128.png"
   },
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "static/js/background.js"
   },
-  "options_page": "settings/settings.html",
+  "options_page": "settings.html",
   "action": {
     "default_title": "Chrome Dark Reader",
-    "default_popup": "popup/popup.html"
+    "default_popup": "popup.html"
   },
   "content_scripts": [
     {
       "all_frames": true,
       "js": [
-        "foreground.js"
+        "static/js/foreground.js"
       ],
       "matches": [
         "http://*/*",
@@ -38,5 +38,5 @@
   "host_permissions": [
     "*://*/*"
   ],
-  "version": "0.0.22.4203"
+  "version": "0.0.22.4229"
 }

@@ -15,7 +15,7 @@
     "test": "react-app-rewired test",
     "build": "npm-run-all build:clean build:react bump-build-version build:after",
     "build:react": "react-app-rewired build",
-    "build:after": "rimraf build/static/js/*.LICENSE.txt",
+    "build:after": "rimraf build/static/js/*.LICENSE.txt build/index.html",
     "build:clean": "rimraf dist",
     "build:style": "npx tailwindcss -i ./src/style.css -o ./dist/style.css --minify",
     "bump-build-version": "node ./scripts/bump-build-version.js"
