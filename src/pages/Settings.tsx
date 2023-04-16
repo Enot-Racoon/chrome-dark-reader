@@ -1,6 +1,6 @@
 import React from "react";
 
-import Demo from "../shared/ui/components/Demo";
+import Demo from "shared/ui/components/Demo";
 
 export default function Settings() {
   return (
