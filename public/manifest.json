@@ -1,25 +1,29 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
-  "icons": [
+  "name": "Chrome Dark Reader",
+  "description": "Reading comfortably with inverted brightness but preserved hue",
+  "manifest_version": 3,
+  "icons": {
+    "16": "logo/logo-16.png",
+    "48": "logo/logo-48.png",
+    "128": "logo/logo-128.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "options_page": "settings/settings.html",
+  "action": {
+    "default_title": "Chrome Dark Reader",
+    "default_popup": "popup/popup.html"
+  },
+  "content_scripts": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    },
-    {
-      "src": "logo192.png",
-      "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "logo512.png",
-      "type": "image/png",
-      "sizes": "512x512"
+      "all_frames": true,
+      "js": ["foreground.js"],
+      "matches": ["http://*/*", "https://*/*", "ftp://*/*", "file://*"],
+      "run_at": "document_start"
     }
   ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "permissions": ["activeTab", "scripting", "storage"],
+  "host_permissions": ["*://*/*"],
+  "version": "0.0.0.4200"
 }
