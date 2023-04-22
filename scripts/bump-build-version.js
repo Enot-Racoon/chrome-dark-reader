@@ -25,7 +25,7 @@ const currentVersion = getVersion(packageJson);
 const buildVersion = getBuildVersion(sourceManifestJson);
 const bumpedVersion = bumpVersion([currentVersion, buildVersion].join("."));
 
-console.log("Bump build version to:", bumpedVersion);
+console.info("Bump build version to:", bumpedVersion);
 
 saveConfig("public/manifest.json", {
   ...sourceManifestJson,
@@ -35,5 +35,3 @@ saveConfig(`${BUILD_DIR}/manifest.json`, {
   ...distManifestJson,
   version: bumpedVersion,
 });
-
-console.log("Ok");

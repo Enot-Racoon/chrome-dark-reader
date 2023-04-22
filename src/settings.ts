@@ -1,4 +1,4 @@
-import App from "./app/app";
-import Settings from "./pages/Settings";
+import App from "app";
+import Settings from "views/settings";
 
 App(Settings);

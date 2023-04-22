@@ -5,16 +5,35 @@
   "main": "index.js",
   "private": true,
   "dependencies": {
+    "-": "^0.0.1",
     "cssnano": "^6.0.0",
+    "D": "^1.0.0",
     "daisyui": "^2.51.5",
+    "effector": "^22.8.1",
+    "effector-react": "^22.5.1",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-jsx-a11y": "^6.7.1",
+    "eslint-plugin-postcss-modules": "^2.0.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "fast-deep-equal": "^3.1.3",
     "react": "^18.2.0",
+    "react-daisyui": "^3.1.2",
     "react-dom": "^18.2.0",
     "react-scripts": "^5.0.1"
   },
   "scripts": {
     "dev": "react-app-rewired start",
+    "dev:popup": "npm-run-all set-view:popup set-config:popup dev",
+    "dev:setting": "npm-run-all set-view:setting set-config:settings dev",
+    "set-view:popup": "cp src/popup.ts src/index.tsx",
+    "set-view:setting": "cp src/settings.ts src/index.tsx",
+    "set-config:buid": "cp scripts/webpack-entries-build.js scripts/webpack-entries.js",
+    "set-config:popup": "cp scripts/webpack-entries-popup.js scripts/webpack-entries.js",
+    "set-config:settings": "cp scripts/webpack-entries-settings.js scripts/webpack-entries.js",
     "test": "react-app-rewired test",
-    "build": "npm-run-all build:clean build:react bump-build-version build:after",
+    "build": "npm-run-all build:clean set-config:buid build:react build:after bump-build-version",
     "build:react": "react-app-rewired build",
     "build:after": "rimraf build/static/js/*.LICENSE.txt build/index.html",
     "build:clean": "rimraf dist",
@@ -64,6 +83,7 @@
     "prettier": "2.8.7",
     "react-app-rewired": "^2.2.1",
     "rimraf": "^5.0.0",
-    "tailwindcss": "^3.3.1"
+    "tailwindcss": "^3.3.1",
+    "typescript": "^4.9.5"
   }
 }

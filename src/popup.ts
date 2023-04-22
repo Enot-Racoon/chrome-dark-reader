@@ -1,4 +1,4 @@
-import App from "app/app";
-import Popup from "pages/Popup";
+import App from "app";
+import Popup from "views/popup";
 
 App(Popup);

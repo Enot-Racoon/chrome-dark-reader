@@ -1,3 +1,4 @@
-import App from "./app/app";
+import App from "app";
+import Popup from "views/popup";
 
-App(() => null);
+App(Popup);
