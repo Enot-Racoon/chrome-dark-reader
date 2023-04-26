@@ -85,6 +85,8 @@ export const createStorageModel = <T>(record: IStorageRecord<T>) => {
     .on(effects.setFx.doneData, (_, value) => value)
     .on(effects.getFx.doneData, (_, value) => value);
 
+  record.addChangeListener((ev) => events.set(ev.newValue));
+
   return {
     Gate,
     events,
