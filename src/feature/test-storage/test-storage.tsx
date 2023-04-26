@@ -27,24 +27,24 @@ const TestStorage = () => {
             checked={value.enabled}
             size="xs"
           />
-          <Toggle
-            disabled={updating}
-            onChange={onChange}
-            checked={value.enabled}
-            size="sm"
-          />
-          <Toggle
-            disabled={updating}
-            onChange={onChange}
-            checked={value.enabled}
-            size="md"
-          />
-          <Toggle
-            disabled={updating}
-            onChange={onChange}
-            checked={value.enabled}
-            size="lg"
-          />
+          {/* <Toggle */}
+          {/*   disabled={updating} */}
+          {/*   onChange={onChange} */}
+          {/*   checked={value.enabled} */}
+          {/*   size="sm" */}
+          {/* /> */}
+          {/* <Toggle */}
+          {/*   disabled={updating} */}
+          {/*   onChange={onChange} */}
+          {/*   checked={value.enabled} */}
+          {/*   size="md" */}
+          {/* /> */}
+          {/* <Toggle */}
+          {/*   disabled={updating} */}
+          {/*   onChange={onChange} */}
+          {/*   checked={value.enabled} */}
+          {/*   size="lg" */}
+          {/* /> */}
         </div>
       )}
     </>

@@ -33,3 +33,5 @@ yarn.lock
 
 # local env files
 .env
+src/index.tsx
+scripts/webpack-entries.js
