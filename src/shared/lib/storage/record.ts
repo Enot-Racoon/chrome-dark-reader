@@ -1,4 +1,8 @@
-import { IStorageConnector, IStorageRecord } from "./types";
+import type {
+  IStorageConnector,
+  IStorageMappedListener,
+  IStorageRecord,
+} from "./types";
 
 export class StorageRecord<T> implements IStorageRecord<T> {
   currentValue: T;
@@ -12,22 +16,7 @@ export class StorageRecord<T> implements IStorageRecord<T> {
     console.log("StorageRecord constructor");
 
     this.bindMethods();
-
     void this.init(initValue);
-  }
-
-  private bindMethods() {
-    this.get = this.get.bind(this);
-    this.set = this.set.bind(this);
-  }
-
-  private async init(initValue: T): Promise<void> {
-    console.log("StorageRecord init");
-    const value = await this.get();
-    console.log("StorageRecord const value = await this.get();", value);
-    if (value === null || value === undefined) {
-      await this.set(initValue);
-    }
   }
 
   async get(): Promise<T> {
@@ -40,5 +29,29 @@ export class StorageRecord<T> implements IStorageRecord<T> {
     this.currentValue = await this.connector.set(this.key, value);
     console.log("StorageRecord", "async set()", this.currentValue);
     return this.currentValue;
+  }
+
+  addChangeListener(listener: IStorageMappedListener<T>) {
+    this.connector.addChangeListener(this.key, listener);
+  }
+
+  removeChangeListener(listener: IStorageMappedListener<T>) {
+    this.connector.removeChangeListener(this.key, listener);
+  }
+
+  private async init(initValue: T): Promise<void> {
+    console.log("StorageRecord init");
+    const value = await this.get();
+    console.log("StorageRecord const value = await this.get();", value);
+    if (value === null || value === undefined) {
+      await this.set(initValue);
+    }
+  }
+
+  private bindMethods() {
+    this.get = this.get.bind(this);
+    this.set = this.set.bind(this);
+    this.addChangeListener = this.addChangeListener.bind(this);
+    this.removeChangeListener = this.removeChangeListener.bind(this);
   }
 }
