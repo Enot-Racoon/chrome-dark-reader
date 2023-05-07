@@ -1,5 +1,6 @@
 const { writeFileSync } = require("fs");
 const { resolve } = require("path");
+const { green } = require("chalk");
 
 const BUILD_DIR = "build";
 
@@ -25,7 +26,7 @@ const currentVersion = getVersion(packageJson);
 const buildVersion = getBuildVersion(sourceManifestJson);
 const bumpedVersion = bumpVersion([currentVersion, buildVersion].join("."));
 
-console.info("Bump build version to:", bumpedVersion);
+console.info("Bump build version to:", green(bumpedVersion));
 
 saveConfig("public/manifest.json", {
   ...sourceManifestJson,

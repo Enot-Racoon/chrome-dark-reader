@@ -1,50 +1,50 @@
 import React from "react";
-import { Toggle } from "react-daisyui";
+import { Button, Toggle } from "react-daisyui";
 
 import * as settingsModel from "entities/settings";
+import * as tabModel from "entities/tab";
 
 const TestStorage = () => {
   settingsModel.useGate();
-  const { value, loading, updating } = settingsModel.useStores();
-  const { set } = settingsModel.useEvents();
+  const settingsStores = settingsModel.useStores();
+  const settingsEvents = settingsModel.useEvents();
+  const tabStores = tabModel.useStores();
+  const tabEvents = tabModel.useEvents();
 
-  const onChange = React.useCallback(
+  const onChangeGlobal = React.useCallback(
     ({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) => {
-      set({ enabled: checked });
+      settingsEvents.set({ ...settingsStores.value, enabled: checked });
     },
-    []
+    [settingsStores.value]
   );
+
+  const onChangeLocal = React.useCallback(() => {
+    tabEvents.toggle();
+  }, []);
 
   return (
     <>
-      {loading ? (
+      <div className="text-xl">{tabStores.host}</div>
+      {settingsStores.loading ? (
         <>Loading ...</>
       ) : (
         <div className="flex flex-col items-center float-left gap-2">
           <Toggle
-            disabled={updating}
-            onChange={onChange}
-            checked={value.enabled}
+            disabled={settingsStores.updating}
+            onChange={onChangeGlobal}
+            checked={settingsStores.value.enabled}
             size="xs"
           />
-          {/* <Toggle */}
-          {/*   disabled={updating} */}
-          {/*   onChange={onChange} */}
-          {/*   checked={value.enabled} */}
-          {/*   size="sm" */}
-          {/* /> */}
-          {/* <Toggle */}
-          {/*   disabled={updating} */}
-          {/*   onChange={onChange} */}
-          {/*   checked={value.enabled} */}
-          {/*   size="md" */}
-          {/* /> */}
-          {/* <Toggle */}
-          {/*   disabled={updating} */}
-          {/*   onChange={onChange} */}
-          {/*   checked={value.enabled} */}
-          {/*   size="lg" */}
-          {/* /> */}
+          <Toggle
+            disabled={settingsStores.updating}
+            onChange={onChangeLocal}
+            checked={tabStores.settings.enabled}
+            size="xs"
+          />
+          {/* <pre>{JSON.stringify(value, null, 2)}</pre> */}
+          <Button onClick={settingsEvents.reset}>
+            Reset settings to default
+          </Button>
         </div>
       )}
     </>

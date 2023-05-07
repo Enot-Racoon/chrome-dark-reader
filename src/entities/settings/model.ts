@@ -1,19 +1,19 @@
 import { createStorageModel } from "shared/lib/model";
 import { getStorageConnector, StorageRecord } from "shared/lib/storage";
+import type { Settings } from "shared/types/entities";
 
 import { STORAGE_KEY } from "./constants";
 
-export interface ISettings {
-  enabled: boolean;
-}
+const defaultSettings: Settings.ISettings = {
+  enabled: false,
+  tabs: [],
+};
 
-const defaultSettings: ISettings = { enabled: false };
-
-const settingsChromeStorage = new StorageRecord(
+const settingsStorageRecord = new StorageRecord(
   STORAGE_KEY,
   defaultSettings,
   getStorageConnector()
 );
 
-export const { Gate, effects, events, stores, useGate, useEvents, useStores } =
-  createStorageModel(settingsChromeStorage);
+export const { gate, effects, events, stores, useGate, useEvents, useStores } =
+  createStorageModel(settingsStorageRecord);

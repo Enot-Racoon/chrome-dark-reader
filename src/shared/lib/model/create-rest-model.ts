@@ -76,6 +76,7 @@ export const createModel = <
   });
   guard({
     clock: Gate.state,
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     source: Gate.state.map((props) => (props && props?.id)!),
     target: events.get,
     filter: (id) => !!id,

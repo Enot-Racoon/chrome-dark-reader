@@ -1,1 +1,1 @@
-export const STORAGE_KEY = "--extension-settings";
+export const STORAGE_KEY = "--extension-tabs";

@@ -1,4 +1,4 @@
 import App from "app";
-import Popup from "views/popup";
+import Settings from "views/settings";
 
-App(Popup);
+App(Settings);

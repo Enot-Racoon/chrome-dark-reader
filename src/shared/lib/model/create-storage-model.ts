@@ -22,6 +22,7 @@ const createEffects = <T>() => ({
 const createEvents = <T>() => ({
   get: createEvent(),
   set: createEvent<T>(),
+  reset: createEvent(),
 });
 
 const createStores = <T>(
@@ -33,21 +34,21 @@ const createStores = <T>(
   const loadingError = restore<Error>(effects.getFx.failData, null);
   const loading = effects.getFx.pending;
   const loaded = restore(
-    sample({ fn: Boolean, clock: effects.getFx.done }),
+    sample({ fn: Boolean, clock: effects.getFx.doneData }),
     false
   );
 
   const updatingError = restore<Error>(effects.setFx.failData, null);
   const updating = effects.setFx.pending;
   const updated = restore(
-    sample({ fn: Boolean, clock: effects.setFx.done }),
+    sample({ fn: Boolean, clock: effects.setFx.doneData }),
     false
   );
 
   const ready = combine(
-    loading,
+    loaded,
     updating,
-    (loading, updating) => !loading && !updating
+    (loaded, updating) => loaded && !updating
   );
 
   return {
@@ -63,7 +64,7 @@ const createStores = <T>(
 };
 
 export const createStorageModel = <T>(record: IStorageRecord<T>) => {
-  const Gate = createGate<void>();
+  const gate = createGate<void>();
 
   const events = createEvents<T>();
   const effects = createEffects<T>();
@@ -72,7 +73,7 @@ export const createStorageModel = <T>(record: IStorageRecord<T>) => {
   effects.getFx.use(record.get.bind(record));
   effects.setFx.use(record.set.bind(record));
 
-  sample({ clock: Gate.open, target: events.get });
+  sample({ clock: gate.open, target: events.get });
   sample({ clock: events.get, target: effects.getFx });
   sample({ clock: events.set, target: effects.setFx });
 
@@ -82,20 +83,26 @@ export const createStorageModel = <T>(record: IStorageRecord<T>) => {
   stores.updated.reset(effects.setFx);
 
   stores.value
+    .on(events.set, (_, value) => value)
     .on(effects.setFx.doneData, (_, value) => value)
-    .on(effects.getFx.doneData, (_, value) => value);
+    .on(effects.getFx.doneData, (_, value) => value)
+    .reset(events.reset);
 
   record.addChangeListener((ev) => events.set(ev.newValue));
+  stores.value.updates.watch((settings) => {
+    void record.set(settings);
+  });
 
   return {
-    Gate,
+    gate,
     events,
     effects,
     stores,
-    useGate: () => useGate(Gate),
+    useGate: () => useGate(gate),
     useEvents: () => ({
       get: useEvent(events.get),
       set: useEvent(events.set),
+      reset: useEvent(events.reset),
     }),
     useStores: () => ({
       value: useStore(stores.value),
