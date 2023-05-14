@@ -15,18 +15,18 @@ export const createStores = <T>(events: Events<T>, effects: Effects<T>) => {
 
   // Loading
   const loadError = restore<Error>(
-    sample({ clock: [effects.getFx.failData, effects.getFx.failData] }),
+    sample({ clock: [effects.get.failData, effects.get.failData] }),
     null
   );
   const loading = combine(
-    effects.getFx.pending,
-    effects.getListFx.pending,
+    effects.get.pending,
+    effects.getList.pending,
     (loading, loadingList) => loading || loadingList
   );
   const loaded = restore(
     sample({
       fn: Boolean,
-      clock: [effects.getFx.done, effects.getListFx.done],
+      clock: [effects.get.done, effects.getList.done],
     }),
     false
   );
@@ -35,35 +35,35 @@ export const createStores = <T>(events: Events<T>, effects: Effects<T>) => {
   const updateError = restore<Error>(
     sample({
       clock: [
-        effects.createFx.failData,
-        effects.updateFx.failData,
-        effects.replaceFx.failData,
+        effects.create.failData,
+        effects.update.failData,
+        effects.replace.failData,
       ],
     }),
     null
   );
   const updating = combine(
-    effects.createFx.pending,
-    effects.updateFx.pending,
-    effects.replaceFx.pending,
+    effects.create.pending,
+    effects.update.pending,
+    effects.replace.pending,
     (creating, updating, replacing) => creating || updating || replacing
   );
   const updated = restore(
     sample({
       fn: Boolean,
-      clock: [effects.createFx.done, effects.updateFx.done],
+      clock: [effects.create.done, effects.update.done],
     }),
     false
   );
 
   // Removing
   const removeError = restore<Error>(
-    sample({ clock: [effects.removeFx.failData] }),
+    sample({ clock: [effects.remove.failData] }),
     null
   );
-  const removing = combine(effects.removeFx.pending);
+  const removing = combine(effects.remove.pending);
   const removed = restore(
-    sample({ fn: Boolean, clock: [effects.removeFx.done] }),
+    sample({ fn: Boolean, clock: [effects.remove.done] }),
     false
   );
 

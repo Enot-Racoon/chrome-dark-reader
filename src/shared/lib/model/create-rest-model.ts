@@ -32,37 +32,33 @@ export const createModel = <
   const stores = createStores<T>(events, effects);
 
   // Set effects handlers
-  api.create && effects.createFx.use(api.create);
-  api.get && effects.getFx.use(api.get);
-  api.getList && effects.getListFx.use(api.getList);
-  api.update && effects.updateFx.use(api.update);
-  api.replace && effects.replaceFx.use(api.replace);
-  api.remove && effects.removeFx.use(api.remove);
+  api.create && effects.create.use(api.create);
+  api.get && effects.get.use(api.get);
+  api.getList && effects.getList.use(api.getList);
+  api.update && effects.update.use(api.update);
+  api.replace && effects.replace.use(api.replace);
+  api.remove && effects.remove.use(api.remove);
 
   // Forwards from events to effects
-  sample({ clock: events.get, target: effects.getFx });
-  sample({ clock: events.getList, target: effects.getListFx });
-  sample({ clock: events.create, target: effects.createFx });
-  sample({ clock: events.update, target: effects.updateFx });
-  sample({ clock: events.replace, target: effects.replaceFx });
-  sample({ clock: events.remove, target: effects.removeFx });
+  sample({ clock: events.get, target: effects.get });
+  sample({ clock: events.getList, target: effects.getList });
+  sample({ clock: events.create, target: effects.create });
+  sample({ clock: events.update, target: effects.update });
+  sample({ clock: events.replace, target: effects.replace });
+  sample({ clock: events.remove, target: effects.remove });
 
   // Select
   stores.selected.reset(events.unselect);
 
   // Set flags reset logic
-  stores.loadError.reset(effects.getFx, effects.getListFx);
-  stores.loaded.reset(effects.getFx, effects.getListFx);
+  stores.loadError.reset(effects.get, effects.getList);
+  stores.loaded.reset(effects.get, effects.getList);
 
-  stores.updateError.reset(
-    effects.createFx,
-    effects.updateFx,
-    effects.replaceFx
-  );
-  stores.updated.reset(effects.createFx, effects.updateFx, effects.replaceFx);
+  stores.updateError.reset(effects.create, effects.update, effects.replace);
+  stores.updated.reset(effects.create, effects.update, effects.replace);
 
-  stores.removeError.reset(effects.removeFx);
-  stores.removed.reset(effects.removeFx);
+  stores.removeError.reset(effects.remove);
+  stores.removed.reset(effects.remove);
 
   // Autoload for SSR/SSG
   forward({ from: events.getSettled, to: Gate.state });
@@ -87,12 +83,12 @@ export const createModel = <
 
   // Stores update logic
   stores.list
-    .on(effects.getListFx.doneData, (_, list) => list)
+    .on(effects.getList.doneData, (_, list) => list)
     .on(
       [
-        effects.createFx.doneData,
-        effects.updateFx.doneData,
-        effects.replaceFx.doneData,
+        effects.create.doneData,
+        effects.update.doneData,
+        effects.replace.doneData,
       ],
       (state, data) => {
         if (!data) return;
@@ -108,7 +104,7 @@ export const createModel = <
         return [...state];
       }
     )
-    .on(effects.removeFx.doneData, (state, data) => {
+    .on(effects.remove.doneData, (state, data) => {
       const movieIndex = state.findIndex((movie) => movie.id === data?.id);
 
       state.splice(movieIndex, 1);
@@ -117,7 +113,7 @@ export const createModel = <
     });
 
   stores.removingIds
-    .on([effects.removeFx], (state, data) => {
+    .on([effects.remove], (state, data) => {
       [data].flat().forEach((id) => {
         if (!state.includes(id)) {
           state.push(id);
@@ -126,7 +122,7 @@ export const createModel = <
 
       return [...state];
     })
-    .on([effects.removeFx.finally], (state, { params }) => {
+    .on([effects.remove.finally], (state, { params }) => {
       [params].flat().forEach((_id) => {
         const index = state.findIndex((id) => id === _id);
         if (index > -1) {
@@ -138,7 +134,7 @@ export const createModel = <
     });
 
   stores.removedIds
-    .on([effects.removeFx.done], (state, { params }) => {
+    .on([effects.remove.done], (state, { params }) => {
       [params].flat().forEach((id) => {
         if (!state.includes(id)) {
           state.push(id);
@@ -147,7 +143,7 @@ export const createModel = <
 
       return [...state];
     })
-    .reset(effects.removeFx);
+    .reset(effects.remove);
 
   //
   // Create API methods

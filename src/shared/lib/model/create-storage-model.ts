@@ -1,28 +1,37 @@
 import {
+  combine,
   createEffect,
   createEvent,
   createStore,
+  forward,
   restore,
   sample,
-  combine,
 } from "effector";
-import { useGate } from "effector-react";
-import { createGate, useEvent, useStore } from "effector-react/compat";
+import * as ER from "effector-react";
+import { delay } from "../common";
+import type { IStorageRecord } from "../storage";
 
-import { IStorageRecord } from "../storage";
+import {
+  createUse,
+  createUseEvents,
+  createUseGate,
+  createUseStores,
+} from "./create-use";
 
 type Events<T> = ReturnType<typeof createEvents<T>>;
 type Effects<T> = ReturnType<typeof createEffects<T>>;
 
 const createEffects = <T>() => ({
-  getFx: createEffect<void, T>(),
-  setFx: createEffect<T, T>(),
+  get: createEffect<void, T>(),
+  set: createEffect<T, T>(),
+  initialize: createEffect<void, void>(),
 });
 
 const createEvents = <T>() => ({
-  get: createEvent(),
+  get: createEvent<void>(),
   set: createEvent<T>(),
-  reset: createEvent(),
+  reset: createEvent<void>(),
+  initialize: createEvent<void>(),
 });
 
 const createStores = <T>(
@@ -31,17 +40,19 @@ const createStores = <T>(
   defaultValue: T
 ) => {
   const value = createStore<T>(defaultValue);
-  const loadingError = restore<Error>(effects.getFx.failData, null);
-  const loading = effects.getFx.pending;
+  const initialized = createStore<boolean>(false);
+  const initializeError = restore<Error>(effects.initialize.failData, null);
+  const loadingError = restore<Error>(effects.get.failData, null);
+  const loading = effects.get.pending;
   const loaded = restore(
-    sample({ fn: Boolean, clock: effects.getFx.doneData }),
+    sample({ fn: Boolean, clock: effects.get.doneData }),
     false
   );
 
-  const updatingError = restore<Error>(effects.setFx.failData, null);
-  const updating = effects.setFx.pending;
+  const updatingError = restore<Error>(effects.set.failData, null);
+  const updating = effects.set.pending;
   const updated = restore(
-    sample({ fn: Boolean, clock: effects.setFx.doneData }),
+    sample({ fn: Boolean, clock: effects.set.doneData }),
     false
   );
 
@@ -53,6 +64,8 @@ const createStores = <T>(
 
   return {
     value,
+    initialized,
+    initializeError,
     ready,
     loadingError,
     loading,
@@ -64,28 +77,34 @@ const createStores = <T>(
 };
 
 export const createStorageModel = <T>(record: IStorageRecord<T>) => {
-  const gate = createGate<void>();
-
+  const gate = ER.createGate<void>();
   const events = createEvents<T>();
   const effects = createEffects<T>();
   const stores = createStores(events, effects, record.currentValue);
 
-  effects.getFx.use(record.get.bind(record));
-  effects.setFx.use(record.set.bind(record));
+  //
 
-  sample({ clock: gate.open, target: events.get });
-  sample({ clock: events.get, target: effects.getFx });
-  sample({ clock: events.set, target: effects.setFx });
+  effects.initialize.use(delay.bind(null, 10));
+  effects.get.use(record.get.bind(record));
+  effects.set.use(record.set.bind(record));
 
-  stores.loadingError.reset(effects.getFx);
-  stores.loaded.reset(effects.getFx);
-  stores.updatingError.reset(effects.setFx);
-  stores.updated.reset(effects.setFx);
+  forward({ from: gate.open, to: events.initialize });
+  forward({ from: events.initialize, to: effects.initialize });
+  stores.initialized.on(effects.initialize.done, () => true);
+  forward({ from: effects.initialize.done, to: events.get });
+
+  forward({ from: events.get, to: effects.get });
+  forward({ from: events.set, to: effects.set });
+
+  stores.loadingError.reset(effects.get);
+  stores.loaded.reset(effects.get);
+  stores.updatingError.reset(effects.set);
+  stores.updated.reset(effects.set);
 
   stores.value
     .on(events.set, (_, value) => value)
-    .on(effects.setFx.doneData, (_, value) => value)
-    .on(effects.getFx.doneData, (_, value) => value)
+    .on(effects.set.doneData, (_, value) => value)
+    .on(effects.get.doneData, (_, value) => value)
     .reset(events.reset);
 
   record.addChangeListener((ev) => events.set(ev.newValue));
@@ -98,21 +117,9 @@ export const createStorageModel = <T>(record: IStorageRecord<T>) => {
     events,
     effects,
     stores,
-    useGate: () => useGate(gate),
-    useEvents: () => ({
-      get: useEvent(events.get),
-      set: useEvent(events.set),
-      reset: useEvent(events.reset),
-    }),
-    useStores: () => ({
-      value: useStore(stores.value),
-      ready: useStore(stores.ready),
-      loadingError: useStore(stores.loadingError),
-      loading: useStore(stores.loading),
-      loaded: useStore(stores.loaded),
-      updatingError: useStore(stores.updatingError),
-      updating: useStore(stores.updating),
-      updated: useStore(stores.updated),
-    }),
+    useGate: createUseGate(gate),
+    useEvents: createUseEvents(events),
+    useStores: createUseStores(stores),
+    use: createUse(events, stores),
   };
 };
