@@ -13,20 +13,25 @@ import {
   createUseGate,
   createUseStores,
 } from "shared/lib/model/create-use";
-import { delay } from "shared/lib/common";
+import type { Tab } from "shared/types/entities";
+
+import * as TabApi from "./api";
 
 const createEvents = () => ({
   initialize: createEvent<void>(),
 });
+
 const createEffects = () => ({
-  initialize: createEffect<void, void, Error>(),
+  initialize: createEffect<void, Tab.ITab | null, Error>(),
 });
+
 const createStores = (
   events: ReturnType<typeof createEvents>,
   effects: ReturnType<typeof createEffects>
 ) => ({
   initialized: createStore<boolean>(false),
   initializeError: restore<Error>(effects.initialize.failData, null),
+  activeTab: createStore<Tab.ITab | null>(null),
 });
 
 export const createModel = () => {
@@ -40,11 +45,12 @@ export const createModel = () => {
     initializeError: effects.initialize.failData,
   };
 
-  effects.initialize.use(delay.bind(null, 10));
+  effects.initialize.use(TabApi.getCurrentTab);
 
   forward({ from: gate.open, to: events.initialize });
   forward({ from: events.initialize, to: effects.initialize });
   stores.initialized.on(effects.initialize.done, () => true);
+  stores.activeTab.on(effects.initialize.doneData, (_, tab) => tab);
 
   return {
     gate,

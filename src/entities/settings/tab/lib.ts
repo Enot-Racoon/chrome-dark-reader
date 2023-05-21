@@ -18,20 +18,17 @@ import {
 } from "shared/lib/model/create-use";
 import type { Settings, Tab } from "shared/types/entities";
 
-import * as TabApi from "./api";
-
 export type ITabSetEventArgs = Partial<Omit<Tab.ITabSettings, "host">>;
 
 export interface ICreateModelOpts {
   settings: Store<Settings.ISettings>;
+  activeTab: Store<Tab.ITab | null>;
 }
 
 const createEvents = () => {
   const setEnabled = createEvent<boolean | null>();
   return {
     initialize: createEvent<void>(),
-    load: createEvent<void>(),
-    set: createEvent<ITabSetEventArgs>(),
     setEnabled,
     enable: setEnabled.prepend(() => true),
     disable: setEnabled.prepend(() => false),
@@ -40,7 +37,6 @@ const createEvents = () => {
 };
 
 const createEffects = () => ({
-  load: createEffect<void, Tab.ITab>(),
   initialize: createEffect<void, void>(),
 });
 
@@ -67,8 +63,7 @@ const createStores = (
 ) => {
   const initialized = createStore<boolean>(false);
   const initializeError = restore<Error>(effects.initialize.failData, null);
-  const tab = createStore<Tab.ITab | null>(null);
-  const host = createStore<string>("");
+  const host = createStore<string>(self.location.host);
   const rules = createStore<Tab.ITabSettingsCssRule[]>([]);
   const enabled = createStore<boolean>(false);
 
@@ -80,34 +75,27 @@ const createStores = (
     host,
     enabled,
     rules,
-    tab,
     settings,
   };
 };
 
 export const createModel = (options: ICreateModelOpts) => {
   const gate = ER.createGate<void>();
-  const events = createEvents();
+  const baseEvents = createEvents();
   const effects = createEffects();
-  const stores = createStores(events, effects);
-
-  //
+  const stores = createStores(baseEvents, effects);
+  const events = {
+    ...baseEvents,
+    initialized: effects.initialize.doneData,
+    initializeError: effects.initialize.failData,
+  };
 
   effects.initialize.use(delay.bind(null, 10));
-  effects.load.use(TabApi.getCurrentTab);
 
   forward({ from: gate.open, to: events.initialize });
   forward({ from: events.initialize, to: effects.initialize });
   stores.initialized.on(effects.initialize.done, () => true);
-  forward({ from: effects.initialize.done, to: events.load });
 
-  forward({ from: events.load, to: effects.load });
-  //
-
-  stores.tab.on(effects.load.doneData, (_, tab) => tab);
-  stores.host.on(stores.tab, (state, tab) =>
-    tab && tab.url ? tab.url.host : state
-  );
   stores.rules.on(stores.host, (state, host) => {
     const { tabs } = options.settings.getState();
     const [tabSettings] = getCurrentTabSettings(host, tabs);
@@ -121,15 +109,25 @@ export const createModel = (options: ICreateModelOpts) => {
 
       return tabSettings.enabled ?? enabled;
     })
-    .on(options.settings, (enabled, { tabs }) => {
-      const host = stores.host.getState();
+    .on(options.settings.updates, (enabled, { tabs }) => {
+      const activeTabState = options.activeTab.getState();
+
+      const host = activeTabState
+        ? activeTabState.url.host
+        : stores.host.getState();
       const [tabSettings] = getCurrentTabSettings(host, tabs);
 
       return tabSettings.enabled ?? enabled;
     });
 
   options.settings.on(events.setEnabled, ({ tabs, ...state }, enabled) => {
-    const [tab, index] = getCurrentTabSettings(stores.host.getState(), tabs);
+    const activeTabState = options.activeTab.getState();
+
+    if (!activeTabState) {
+      return { tabs, ...state };
+    }
+
+    const [tab, index] = getCurrentTabSettings(activeTabState.url.host, tabs);
 
     if (enabled === null) {
       tab.enabled = !tab.enabled;
@@ -145,8 +143,6 @@ export const createModel = (options: ICreateModelOpts) => {
 
     return { ...state, tabs };
   });
-
-  //
 
   return {
     gate,

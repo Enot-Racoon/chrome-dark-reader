@@ -1,5 +1,6 @@
 import * as appModel from "entities/app";
 
-console.log("Foreground", window.location.host);
-
 setTimeout(appModel.events.initialize);
+
+// currentUrl != currentTab
+// popup no have tab => TabApi.getCurrentTab

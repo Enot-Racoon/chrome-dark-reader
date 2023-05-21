@@ -31,6 +31,7 @@
     }
   ],
   "permissions": [
+    "tabs",
     "activeTab",
     "scripting",
     "storage"
@@ -38,5 +39,5 @@
   "host_permissions": [
     "*://*/*"
   ],
-  "version": "0.0.22.4427"
+  "version": "0.0.22.4469"
 }

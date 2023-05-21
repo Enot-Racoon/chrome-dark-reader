@@ -8,15 +8,14 @@ import {
   sample,
 } from "effector";
 import * as ER from "effector-react";
-import { delay } from "../common";
-import type { IStorageRecord } from "../storage";
 
 import {
   createUse,
   createUseEvents,
   createUseGate,
   createUseStores,
-} from "./create-use";
+} from "shared/lib/model/create-use";
+import type { IStorageRecord } from "shared/lib/storage";
 
 type Events<T> = ReturnType<typeof createEvents<T>>;
 type Effects<T> = ReturnType<typeof createEffects<T>>;
@@ -78,13 +77,19 @@ const createStores = <T>(
 
 export const createStorageModel = <T>(record: IStorageRecord<T>) => {
   const gate = ER.createGate<void>();
-  const events = createEvents<T>();
+  const baseEvents = createEvents<T>();
   const effects = createEffects<T>();
-  const stores = createStores(events, effects, record.currentValue);
+  const stores = createStores(baseEvents, effects, record.currentValue);
+  const events = {
+    ...baseEvents,
+    initialized: effects.initialize.doneData,
+    initializeError: effects.initialize.failData,
+  };
 
-  //
+  effects.initialize.use(async () => {
+    await effects.get();
+  });
 
-  effects.initialize.use(delay.bind(null, 10));
   effects.get.use(record.get.bind(record));
   effects.set.use(record.set.bind(record));
 

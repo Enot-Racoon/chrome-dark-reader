@@ -1,8 +1,7 @@
 import React from "react";
-import { Button } from "react-daisyui";
 
 import * as settingsModel from "entities/settings";
-import Code from "shared/ui/components/code";
+import { Button, Code } from "shared/ui/components";
 import type { Settings } from "shared/types/entities";
 
 import styles from "./edit.module.css";
@@ -11,19 +10,18 @@ export interface SettingsEditProps {
   checked?: unknown;
 }
 
+const stringifySetting = (settings: Settings.ISettings): string => {
+  return JSON.stringify(settings, null, 2);
+};
+
 const SettingsEdit: React.FC<SettingsEditProps> = () => {
-  const events = settingsModel.useEvents();
-  const settingsStores = settingsModel.useStores();
-  const { value, loading, updating } = settingsStores;
-  const [settings, setSettings] = React.useState(
-    JSON.stringify(value, null, 2)
-  );
+  const { events, stores } = settingsModel.use();
+  const { value, loading, updating } = stores;
+  const [settings, setSettings] = React.useState(stringifySetting(value));
 
   React.useEffect(() => {
-    setSettings(JSON.stringify(value, null, 2));
+    setSettings(stringifySetting(value));
   }, [value]);
-
-  // console.log({ settingsStores });
 
   const onSave = () => {
     events.set(JSON.parse(settings) as Settings.ISettings);

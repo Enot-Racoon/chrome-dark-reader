@@ -28,7 +28,5 @@ export const {
   use,
 } = createStorageModel(settingsStorageRecord);
 
-stores.initialized.updates.watch(log("Settings initialized was changed"));
+events.initialized.watch(log("Settings was initialized"));
 stores.initializeError.updates.watch(error);
-
-stores.value.updates.watch(log("stores.value was updated"));
