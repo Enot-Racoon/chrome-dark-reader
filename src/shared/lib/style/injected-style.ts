@@ -20,8 +20,21 @@ export const toggleAdditionalStyles = (enabled: boolean) => {
     `--htmlbg: ${enabled ? "#000" : "default"};`;
 
   styleEl.innerHTML = `:root {${cssVars}}
-html {
+
+html, 
+iframe {
   background: var(--htmlbg);
   filter: invert(var(--invert)) hue-rotate(var(--hue)); 
-}`;
+}
+
+img,
+picture,
+video {
+  filter: invert(var(--invert)) hue-rotate(var(--hue)); 
+}
+
+picture img {
+  filter: none;
+}
+`;
 };
