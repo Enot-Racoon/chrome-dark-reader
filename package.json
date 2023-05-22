@@ -1,6 +1,6 @@
 {
   "name": "chrome-dark-reader",
-  "version": "0.0.22",
+  "version": "0.1.0",
   "description": "Chrome Dark Reader. Reading comfortably with inverted brightness but preserved hue",
   "main": "index.js",
   "private": true,

@@ -1,4 +1,4 @@
-import { error, log } from "shared/lib/common";
+import { error } from "shared/lib/common";
 import { createStorageModel } from "shared/lib/model";
 import { getStorageConnector, StorageRecord } from "shared/lib/storage";
 
@@ -28,5 +28,5 @@ export const {
   use,
 } = createStorageModel(settingsStorageRecord);
 
-events.initialized.watch(log("Settings was initialized"));
+// events.initialized.watch(log("Settings was initialized"));
 stores.initializeError.updates.watch(error);

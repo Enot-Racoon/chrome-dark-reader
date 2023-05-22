@@ -1,4 +1,4 @@
-import { error, log } from "shared/lib/common";
+import { error } from "shared/lib/common";
 
 import { createModel } from "./lib";
 
@@ -13,5 +13,5 @@ export const {
   use,
 } = createModel();
 
-events.initialized.watch(log("App was initialized"));
+// events.initialized.watch(log("App was initialized"));
 stores.initializeError.updates.watch(error);

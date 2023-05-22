@@ -5,7 +5,11 @@ import * as tabSettingsModel from "entities/settings/tab";
 import * as activeTabModel from "entities/activeTab";
 import { Button, Toggle } from "shared/ui/components";
 
-const ToggleActiveTab = () => {
+export interface ToggleActiveTabProps {
+  simplify?: boolean;
+}
+
+const ToggleActiveTab = ({ simplify }: ToggleActiveTabProps) => {
   activeTabModel.useGate();
 
   const settings = settingsModel.use();
@@ -31,22 +35,29 @@ const ToggleActiveTab = () => {
         <>Loading ...</>
       ) : (
         <div className="flex flex-col items-center float-left gap-2">
-          <div className="text-xl">{activeTab.url.host}</div>
-          <Toggle
-            disabled={settings.stores.updating}
-            onChange={onChangeGlobal}
-            checked={settings.stores.value.enabled}
-            size="xs"
-          />
+          {!simplify && <div className="text-xl">{activeTab.url.host}</div>}
+
+          {!simplify && (
+            <Toggle
+              disabled={settings.stores.updating}
+              onChange={onChangeGlobal}
+              checked={settings.stores.value.enabled}
+              size="xs"
+            />
+          )}
+
           <Toggle
             disabled={settings.stores.updating}
             onChange={onChangeLocal}
             checked={tabSettings.stores.settings.enabled}
             size="xs"
           />
-          <Button onClick={settings.events.reset}>
-            Reset settings to default
-          </Button>
+
+          {!simplify && (
+            <Button onClick={settings.events.reset}>
+              Reset settings to default
+            </Button>
+          )}
         </div>
       )}
     </>

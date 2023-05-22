@@ -13,12 +13,9 @@ export const getCurrentTab = () => {
 };
 
 export const listenRequestGetCurrentTab = () => {
-  console.log("listenRequestGetCurrentTab");
   messageManager.addListener((request, sender, sendResponse) => {
     void (async () => {
-      const activeTab = await ActiveTabApi.getActiveTab();
-      console.log("activeTab", { activeTab, request, sender, sendResponse });
-      sendResponse(activeTab);
+      sendResponse(await ActiveTabApi.getActiveTab());
     })();
   });
 };

@@ -1,6 +1,7 @@
 import * as appModel from "entities/app";
+import * as tabSettingsModel from "entities/settings/tab";
+import { toggleAdditionalStyles } from "shared/lib/style";
 
 setTimeout(appModel.events.initialize);
 
-// currentUrl != currentTab
-// popup no have tab => TabApi.getCurrentTab
+tabSettingsModel.stores.enabled.watch(toggleAdditionalStyles);

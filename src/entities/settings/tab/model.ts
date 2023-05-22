@@ -1,4 +1,4 @@
-import { error, log } from "shared/lib/common";
+import { error } from "shared/lib/common";
 import * as settingsModel from "entities/settings";
 import * as activeTabModel from "entities/activeTab";
 
@@ -18,8 +18,5 @@ export const {
   activeTab: activeTabModel.stores.activeTab,
 });
 
-events.initialized.watch(log("Tab was initialized"));
+// events.initialized.watch(log("Tab was initialized"));
 stores.initializeError.updates.watch(error);
-
-stores.host.watch(log("stores.host"));
-stores.enabled.watch(log("stores.enabled"));
