@@ -1,15 +1,15 @@
-import qs from "qs";
+import qs from 'qs'
 
-import type { Tab } from "shared/types/entities";
-import type { ChromeTab } from "shared/types/entities/tab";
+import type { Tab } from 'shared/types/entities'
+import type { ChromeTab } from 'shared/types/entities/tab'
 
 export const mapTab = (tab?: ChromeTab | null): Tab.ITab | null => {
   if (!tab) {
-    return null;
+    return null
   }
 
-  const urlStr = tab.url ?? "";
-  const urlObj = new URL(urlStr);
+  const urlStr = tab.url ?? ''
+  const urlObj = new URL(urlStr)
 
   return Object.assign(tab, {
     url: {
@@ -27,5 +27,5 @@ export const mapTab = (tab?: ChromeTab | null): Tab.ITab | null => {
       username: urlObj.username,
       toString: () => urlStr,
     },
-  });
-};
+  })
+}

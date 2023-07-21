@@ -1,1 +1,1 @@
-export * from "./injected-style";
+export * from './injected-style'

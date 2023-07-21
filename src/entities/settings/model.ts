@@ -1,21 +1,21 @@
-import { error } from "shared/lib/common";
-import { createStorageModel } from "shared/lib/model";
-import { getStorageConnector, StorageRecord } from "shared/lib/storage";
+import { error } from 'shared/lib/common'
+import { createStorageSyncModel } from 'shared/lib/store/model'
+import { StorageRecord, ChromeStorageConnector } from 'shared/lib/storage'
 
-import type { Settings } from "shared/types/entities";
+import type { Settings } from 'shared/types/entities'
 
-import { STORAGE_KEY } from "./constants";
+import { STORAGE_KEY } from './constants'
 
 const defaultSettings: Settings.ISettings = {
   enabled: false,
   tabs: [],
-};
+}
 
 const settingsStorageRecord = new StorageRecord(
   STORAGE_KEY,
   defaultSettings,
-  getStorageConnector()
-);
+  new ChromeStorageConnector()
+)
 
 export const {
   gate,
@@ -26,7 +26,7 @@ export const {
   useEvents,
   useStores,
   use,
-} = createStorageModel(settingsStorageRecord);
+} = createStorageSyncModel(settingsStorageRecord)
 
 // events.initialized.watch(log("Settings was initialized"));
-stores.initializeError.updates.watch(error);
+stores.initializeError.updates.watch(error)

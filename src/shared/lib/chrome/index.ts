@@ -1,3 +1,3 @@
-export * from "shared/lib/chrome/tab/mapTab";
-export * from "./message";
-export * from "shared/lib/chrome/tab/messager";
+export * from './tab/mapTab'
+export * from './tab/query'
+export * from './message/message'

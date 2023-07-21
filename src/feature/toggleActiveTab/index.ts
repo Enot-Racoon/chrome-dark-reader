@@ -1,1 +1,1 @@
-export { default } from "feature/toggleActiveTab/ToggleActiveTab";
+export { default } from 'feature/toggleActiveTab/ToggleActiveTab'

@@ -1,8 +1,8 @@
-import { error } from "shared/lib/common";
-import * as settingsModel from "entities/settings";
-import * as activeTabModel from "entities/activeTab";
+import { error } from 'shared/lib/common'
+import * as settingsModel from 'entities/settings'
+import * as activeTabModel from 'entities/activeTab'
 
-import { createModel } from "./lib";
+import { createModel } from './lib'
 
 export const {
   gate,
@@ -16,7 +16,7 @@ export const {
 } = createModel({
   settings: settingsModel.stores.value,
   activeTab: activeTabModel.stores.activeTab,
-});
+})
 
 // events.initialized.watch(log("Tab was initialized"));
-stores.initializeError.updates.watch(error);
+stores.initializeError.updates.watch(error)

@@ -1,23 +1,23 @@
-let styleEl: HTMLStyleElement;
+let styleEl: HTMLStyleElement
 
 export const toggleAdditionalStyles = (enabled: boolean) => {
   if (!document) {
-    return;
+    return
   }
 
   if (!styleEl) {
-    const htmlEl = document.querySelector("html");
+    const htmlEl = document.querySelector('html')
 
     if (htmlEl) {
-      styleEl = document.createElement("style");
-      htmlEl.appendChild(styleEl);
+      styleEl = document.createElement('style')
+      htmlEl.appendChild(styleEl)
     }
   }
 
   const cssVars =
     `--invert: ${enabled ? 1 : 0};` +
     `--hue: ${enabled ? 180 : 0}deg;` +
-    `--htmlbg: ${enabled ? "#000" : "default"};`;
+    `--htmlbg: ${enabled ? '#000' : 'default'};`
 
   styleEl.innerHTML = `:root {${cssVars}}
 
@@ -36,5 +36,5 @@ video {
 picture img {
   filter: none;
 }
-`;
-};
+`
+}

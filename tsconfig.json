@@ -17,12 +17,18 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "incremental": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "strictBindCallApply": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
     "plugins": [
       {
         "name": "typescript-plugin-css-modules"
       }
-    ],
-    "typeRoots": ["./node_modules/@types", "./src/shared/types"]
+    ]
   },
   "include": [
     "src",

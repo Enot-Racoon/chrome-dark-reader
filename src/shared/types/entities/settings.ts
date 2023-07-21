@@ -1,6 +1,6 @@
-import { ITabSettings } from "./tab";
+import { ITabSettings } from './tab'
 
 export interface ISettings {
-  enabled: boolean;
-  readonly tabs: ITabSettings[];
+  enabled: boolean
+  readonly tabs: ITabSettings[]
 }

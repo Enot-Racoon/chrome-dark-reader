@@ -1,6 +1,6 @@
-import { error } from "shared/lib/common";
+import { error } from 'shared/lib/common'
 
-import { createModel } from "./lib";
+import { createModel } from './lib'
 
 export const {
   gate,
@@ -11,7 +11,7 @@ export const {
   useEvents,
   useStores,
   use,
-} = createModel();
+} = createModel()
 
 // events.initialized.watch(log("App was initialized"));
-stores.initializeError.updates.watch(error);
+stores.initializeError.updates.watch(error)

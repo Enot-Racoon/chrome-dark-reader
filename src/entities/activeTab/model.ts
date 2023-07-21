@@ -1,5 +1,5 @@
-import { error } from "shared/lib/common";
-import { createModel } from "./lib";
+import { error } from 'shared/lib/common'
+import { createModel } from './lib'
 
 export const {
   gate,
@@ -10,7 +10,7 @@ export const {
   useEvents,
   useStores,
   use,
-} = createModel();
+} = createModel()
 
 // events.initialized.watch(log("Active Tab was initialized"));
-stores.initializeError.updates.watch(error);
+stores.initializeError.updates.watch(error)

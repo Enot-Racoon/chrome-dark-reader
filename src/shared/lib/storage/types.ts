@@ -3,39 +3,39 @@
  */
 export type ILocalStorageEvent = Pick<
   StorageEvent,
-  "key" | "newValue" | "oldValue"
->;
+  'key' | 'newValue' | 'oldValue'
+>
 /**
  * Event from chrome.storage.onChange.addListener((event: ILocalStorageEvent) => void)
  */
 export type IChromeStorageEvent = {
-  [key: string]: chrome.storage.StorageChange;
-};
+  [key: string]: chrome.storage.StorageChange
+}
 /**
  * Union of events from addListener and storage.onChange.addListener
  */
-export type IStorageChangeEvent = ILocalStorageEvent | IChromeStorageEvent;
+export type IStorageChangeEvent = ILocalStorageEvent | IChromeStorageEvent
 /**
  * Union of event listeners for addListener and storage.onChange.addListener
  */
 export type IStorageChangeListener = <E extends IStorageChangeEvent>(
   event: E
-) => void;
+) => void
 
 /**
  * Storage mapped event
  */
 export interface IStorageMappedEvent<T> {
-  readonly key: string;
-  readonly newValue: T;
-  readonly oldValue?: T | null;
+  readonly key: string
+  readonly newValue: T
+  readonly oldValue?: T | null
 }
 
 /**
  * Storage mapped event listener
  */
 export interface IStorageMappedListener<T> {
-  <E extends IStorageMappedEvent<T>>(event: E): void;
+  <E extends IStorageMappedEvent<T>>(event: E): void
 }
 
 /**
@@ -43,36 +43,33 @@ export interface IStorageMappedListener<T> {
  */
 export interface IStorageChangeController<T> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  createListener<L extends (...args: any) => void>(
+  createListener: <L extends (...args: any) => void>(
     key: string,
     listener: IStorageMappedListener<T>,
     mapper: (...args: Parameters<L>) => IStorageMappedEvent<T>
-  ): L;
+  ) => L
 
-  deleteListener(
+  deleteListener: (
     listener: IStorageMappedListener<T>
-  ): IStorageChangeListener | null;
+  ) => IStorageChangeListener | null
 }
 
 export interface IStorageConnector<T> {
-  get(key: string): Promise<T | null>;
-
-  set(key: string, value: T): Promise<T>;
-
-  addChangeListener(key: string, listener: IStorageMappedListener<T>): void;
-
-  removeChangeListener(key: string, listener: IStorageMappedListener<T>): void;
+  get: (key: string) => Promise<T | null>
+  set: (key: string, value: T) => Promise<T>
+  addChangeListener: (key: string, listener: IStorageMappedListener<T>) => void
+  removeChangeListener: (
+    key: string,
+    listener: IStorageMappedListener<T>
+  ) => void
 }
 
 export interface IStorageRecord<T> {
-  readonly key: string;
-  currentValue: T;
+  readonly key: string
+  currentValue: T
 
-  get(): Promise<T>;
-
-  set(value: T): Promise<T>;
-
-  addChangeListener(listener: IStorageMappedListener<T>): void;
-
-  removeChangeListener(listener: IStorageMappedListener<T>): void;
+  get: () => Promise<T>
+  set: (value: T) => Promise<T>
+  addChangeListener: (listener: IStorageMappedListener<T>) => void
+  removeChangeListener: (listener: IStorageMappedListener<T>) => void
 }

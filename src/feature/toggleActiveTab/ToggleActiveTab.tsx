@@ -1,33 +1,33 @@
-import React from "react";
+import React from 'react'
 
-import * as settingsModel from "entities/settings";
-import * as tabSettingsModel from "entities/settings/tab";
-import * as activeTabModel from "entities/activeTab";
-import { Button, Toggle } from "shared/ui/components";
+import * as settingsModel from 'entities/settings'
+import * as tabSettingsModel from 'entities/settings/tab'
+import * as activeTabModel from 'entities/activeTab'
+import { Button, Toggle } from 'shared/ui/components'
 
 export interface ToggleActiveTabProps {
-  simplify?: boolean;
+  simplify?: boolean
 }
 
 const ToggleActiveTab = ({ simplify }: ToggleActiveTabProps) => {
-  activeTabModel.useGate();
+  activeTabModel.useGate()
 
-  const settings = settingsModel.use();
-  const tabSettings = tabSettingsModel.use();
-  const { activeTab } = activeTabModel.useStores();
+  const settings = settingsModel.use()
+  const tabSettings = tabSettingsModel.use()
+  const { activeTab } = activeTabModel.useStores()
 
   const onChangeGlobal = React.useCallback(
     ({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) => {
-      settings.events.set({ ...settings.stores.value, enabled: checked });
+      settings.events.set({ ...settings.stores.value, enabled: checked })
     },
     [settings.stores.value]
-  );
+  )
 
   const onChangeLocal = React.useCallback(() => {
-    tabSettings.events.toggle();
-  }, []);
+    tabSettings.events.toggle()
+  }, [])
 
-  const isLoading = settings.stores.loading || !activeTab;
+  const isLoading = settings.stores.loading || !activeTab
 
   return (
     <>
@@ -61,7 +61,7 @@ const ToggleActiveTab = ({ simplify }: ToggleActiveTabProps) => {
         </div>
       )}
     </>
-  );
-};
+  )
+}
 
-export default ToggleActiveTab;
+export default ToggleActiveTab

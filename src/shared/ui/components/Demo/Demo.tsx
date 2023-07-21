@@ -1,8 +1,8 @@
-import React from "react";
+import React from 'react'
 
-import logo from "shared/ui/assets/logo.svg";
+import logo from 'shared/ui/assets/logo.svg'
 
-import "./Demo.css";
+import './Demo.css'
 
 const Demo: React.FC<React.PropsWithChildren> = ({
   children,
@@ -13,6 +13,6 @@ const Demo: React.FC<React.PropsWithChildren> = ({
       {children}
     </header>
   </div>
-);
+)
 
-export default Demo;
+export default Demo

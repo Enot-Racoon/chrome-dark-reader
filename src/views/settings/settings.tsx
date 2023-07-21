@@ -1,15 +1,14 @@
-import React from "react";
+import React from 'react'
 
-import { DefaultLayout } from "shared/ui/layouts";
-import SettingsEdit from "feature/settings/edit";
+import SettingsEdit from 'feature/settings/edit'
 
-import styles from "./settings.module.css";
+import styles from './settings.module.css'
 
 const Settings = () => (
-  <DefaultLayout className={styles.container}>
+  <div className={styles.container}>
     <h1>Chrome extension Dark Reader: Settings</h1>
     <SettingsEdit />
-  </DefaultLayout>
-);
+  </div>
+)
 
-export default Settings;
+export default Settings

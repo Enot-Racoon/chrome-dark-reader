@@ -1,5 +1,5 @@
-export {};
+export {}
 
 declare global {
-  type ValOrArr<T> = T | T[];
+  type ValOrArr<T> = T | T[]
 }

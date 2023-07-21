@@ -1,14 +1,13 @@
-import React from "react";
+import React from 'react'
 
-import { DefaultLayout } from "shared/ui/layouts";
-import ToggleActiveTab from "feature/toggleActiveTab";
+import ToggleActiveTab from 'feature/toggleActiveTab'
 
-import styles from "./popup.module.css";
+import styles from './popup.module.css'
 
 const Popup = () => (
-  <DefaultLayout className={styles.container}>
+  <div className={styles.container}>
     <ToggleActiveTab simplify />
-  </DefaultLayout>
-);
+  </div>
+)
 
-export default Popup;
+export default Popup

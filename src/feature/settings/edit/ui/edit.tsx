@@ -1,38 +1,38 @@
-import React from "react";
+import React from 'react'
 
-import * as settingsModel from "entities/settings";
-import { Button, Code } from "shared/ui/components";
-import type { Settings } from "shared/types/entities";
+import * as settingsModel from 'entities/settings'
+import { Button, Code } from 'shared/ui/components'
+import type { Settings } from 'shared/types/entities'
 
-import styles from "./edit.module.css";
+import styles from './edit.module.css'
 
 export interface SettingsEditProps {
-  checked?: unknown;
+  checked?: unknown
 }
 
 const stringifySetting = (settings: Settings.ISettings): string => {
-  return JSON.stringify(settings, null, 2);
-};
+  return JSON.stringify(settings, null, 2)
+}
 
 const SettingsEdit: React.FC<SettingsEditProps> = () => {
-  const { events, stores } = settingsModel.use();
-  const { value, loading, updating } = stores;
-  const [settings, setSettings] = React.useState(stringifySetting(value));
+  const { events, stores } = settingsModel.use()
+  const { value, loading, updating } = stores
+  const [settings, setSettings] = React.useState(stringifySetting(value))
 
   React.useEffect(() => {
-    setSettings(stringifySetting(value));
-  }, [value]);
+    setSettings(stringifySetting(value))
+  }, [value])
 
   const onSave = () => {
-    events.set(JSON.parse(settings) as Settings.ISettings);
-  };
+    events.set(JSON.parse(settings) as Settings.ISettings)
+  }
 
   const onReset = () => {
-    setSettings(JSON.stringify(value));
-  };
+    setSettings(JSON.stringify(value))
+  }
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <p>Loading...</p>
   }
 
   return (
@@ -52,7 +52,7 @@ const SettingsEdit: React.FC<SettingsEditProps> = () => {
         </Button>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default SettingsEdit;
+export default SettingsEdit
