@@ -1,6 +1,6 @@
 {
   "name": "chrome-dark-reader",
-  "version": "0.1.",
+  "version": "0.1.4",
   "description": "Chrome Dark Reader. Reading comfortably with inverted brightness but preserved hue",
   "main": "index.js",
   "private": true,
@@ -53,18 +53,10 @@
     "typescript": "^4.9.5"
   },
   "scripts": {
-    "dev": "react-app-rewired start",
-    "dev:popup": "npm-run-all set-view:popup set-config:popup dev",
-    "dev:setting": "npm-run-all set-view:setting set-config:settings dev",
-    "set-view:popup": "cp src/popup.ts src/index.tsx",
-    "set-view:setting": "cp src/settings.ts src/index.tsx",
-    "set-config:buid": "cp scripts/webpack-entries-build.js scripts/webpack-entries.js",
-    "set-config:popup": "cp scripts/webpack-entries-popup.js scripts/webpack-entries.js",
-    "set-config:settings": "cp scripts/webpack-entries-settings.js scripts/webpack-entries.js",
     "test": "react-app-rewired test",
-    "build": "npm-run-all build:clean set-config:buid build:react build:after bump-build-version",
+    "build": "npm-run-all build:clean build:react build:after bump-build-version",
     "build:react": "react-app-rewired build",
-    "build:after": "rimraf build/static/js/*.LICENSE.txt build/index.html",
+    "build:after": "rimraf build/static/js/*.LICENSE.txt build/static/**/*.map build/index.html",
     "build:clean": "rimraf dist",
     "build:style": "npx tailwindcss -i ./src/style.css -o ./dist/style.css --minify",
     "bump-build-version": "node ./scripts/bump-build-version.js"

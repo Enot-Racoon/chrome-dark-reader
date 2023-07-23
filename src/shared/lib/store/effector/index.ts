@@ -5,6 +5,7 @@ export { createGate, useUnit as use, useGate } from 'effector-react'
 export type { Gate } from 'effector-react'
 export type { Unit } from 'effector'
 
+export * from './create-use'
 export * from './createEffect'
 export * from './createEvent'
 export * from './createStore'

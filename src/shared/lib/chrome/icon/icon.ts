@@ -1,7 +1,7 @@
-export const ICON_DIR = '/static/icons' // todo: move to config
+import Config from 'shared/config'
 
 export const setIcon = (name: string) => {
-  return chrome.action.setIcon({ path: `${ICON_DIR}/${name}` })
+  return chrome.action.setIcon({ path: `${Config.ICON_DIR}/${name}` })
 }
 
 type BaseStateMap = { [k: Index]: string }

@@ -1,7 +1,5 @@
 import equal from 'fast-deep-equal'
 
-import { delay } from 'shared/lib/common'
-
 import type {
   IStorageConnector,
   IStorageMappedListener,
@@ -45,7 +43,6 @@ export class StorageRecord<T> implements IStorageRecord<T> {
 
     currentValue = await this.connector.set(this.key, value)
     this.currentValue = currentValue
-    await delay(600)
 
     return currentValue
   }

@@ -1,25 +1,24 @@
-import modelLib from 'shared/lib/store/model'
-import storageLib from 'shared/lib/storage'
+import Config from 'shared/config'
+import ModelLib from 'shared/lib/store'
+import StorageLib from 'shared/lib/storage'
 
 import lib from './lib'
-import config from './config'
 import type Type from './types'
 
 const defaultPreferences: Type.IPreferences = { hosts: {} }
 
-const settingsRecord = new storageLib.StorageRecord(
-  config.STORAGE_KEY,
+const settingsRecord = new StorageLib.StorageRecord(
+  Config.STORAGE_KEY,
   defaultPreferences,
-  new storageLib.ChromeStorageConnector()
+  new StorageLib.ChromeStorageConnector()
 )
 
 const model = lib.createModel(settingsRecord)
 const { preferences, activeTab, tabPreferences, activeTabPreferences } =
   model.stores
 
-export const { gate } = model
-export const use = modelLib.createUse(model.events, model.stores)
-export const useGate = modelLib.createUseGate(model.gate)
+export const use = ModelLib.createUse(model.events, model.stores)
+export const useGate = ModelLib.createUseGate(model.gate)
 export const { initialize, tabActivated, iconClicked } = model.events
 export const data = {
   preferences,
