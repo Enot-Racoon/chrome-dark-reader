@@ -43,22 +43,25 @@ export interface IStorageMappedListener<T> {
  */
 export interface IStorageChangeController<T> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  createListener: <L extends (...args: any) => void>(
+  readonly createListener: <L extends (...args: any) => void>(
     key: string,
     listener: IStorageMappedListener<T>,
     mapper: (...args: Parameters<L>) => IStorageMappedEvent<T>
   ) => L
 
-  deleteListener: (
+  readonly deleteListener: (
     listener: IStorageMappedListener<T>
   ) => IStorageChangeListener | null
 }
 
 export interface IStorageConnector<T> {
-  get: (key: string) => Promise<T | null>
-  set: (key: string, value: T) => Promise<T>
-  addChangeListener: (key: string, listener: IStorageMappedListener<T>) => void
-  removeChangeListener: (
+  readonly get: (key: string) => Promise<T | null>
+  readonly set: (key: string, value: T) => Promise<T>
+  readonly addChangeListener: (
+    key: string,
+    listener: IStorageMappedListener<T>
+  ) => void
+  readonly removeChangeListener: (
     key: string,
     listener: IStorageMappedListener<T>
   ) => void
@@ -68,8 +71,8 @@ export interface IStorageRecord<T> {
   readonly key: string
   currentValue: T
 
-  get: () => Promise<T>
-  set: (value: T) => Promise<T>
-  addChangeListener: (listener: IStorageMappedListener<T>) => void
-  removeChangeListener: (listener: IStorageMappedListener<T>) => void
+  readonly get: () => Promise<T>
+  readonly set: (value: T) => Promise<T>
+  readonly addChangeListener: (listener: IStorageMappedListener<T>) => void
+  readonly removeChangeListener: (listener: IStorageMappedListener<T>) => void
 }

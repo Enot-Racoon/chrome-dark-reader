@@ -12,7 +12,7 @@ export class StorageEventController<T> implements IStorageChangeController<T> {
   > = new WeakMap()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  createListener = <L extends (...args: any) => void>(
+  readonly createListener = <L extends (...args: any) => void>(
     key: string,
     listener: IStorageMappedListener<T>,
     mapper: (...args: Parameters<L>) => IStorageMappedEvent<T>
@@ -24,7 +24,7 @@ export class StorageEventController<T> implements IStorageChangeController<T> {
     return wrappedListener as L
   }
 
-  deleteListener = (
+  readonly deleteListener = (
     listener: IStorageMappedListener<T>
   ): IStorageChangeListener | null => {
     const wrappedListener = this.listeners.get(listener)

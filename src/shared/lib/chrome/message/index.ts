@@ -1,5 +1,6 @@
 export * as default from '.'
 
-export * from './message'
 export * from './messageDispatcher'
 export * from './messageTransceiver'
+export * from './typedMessage'
+export * from './types'

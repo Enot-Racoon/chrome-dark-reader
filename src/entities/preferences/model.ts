@@ -14,11 +14,16 @@ const settingsRecord = new storageLib.StorageRecord(
 )
 
 const model = lib.createModel(settingsRecord)
+const { preferences, activeTab, tabPreferences, activeTabPreferences } =
+  model.stores
 
 export const { gate } = model
+export const use = modelLib.createUse(model.events, model.stores)
 export const useGate = modelLib.createUseGate(model.gate)
-export const { initialize, tabActivated } = model.events
+export const { initialize, tabActivated, iconClicked } = model.events
 export const data = {
-  preferences: model.stores.preferences,
-  activeTab: model.stores.activeTab,
+  preferences,
+  activeTab,
+  tabPreferences,
+  activeTabPreferences,
 }

@@ -2,6 +2,7 @@
 }
 
 .controls {
+  @apply mt-4 flex gap-x-4;
 }
 
 .save {

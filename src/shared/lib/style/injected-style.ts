@@ -1,6 +1,10 @@
 let styleEl: HTMLStyleElement
 
-export const toggleAdditionalStyles = (enabled: boolean) => {
+export const toggleTabStyle = (tab: { enabled: boolean; styles: string }) => {
+  toggleAdditionalStyles(tab.enabled, tab.styles)
+}
+
+export const toggleAdditionalStyles = (enabled: boolean, styles = '') => {
   if (!document) {
     return
   }
@@ -23,7 +27,7 @@ export const toggleAdditionalStyles = (enabled: boolean) => {
 
 html, 
 iframe {
-  background: var(--htmlbg);
+  background-color: var(--color-bg);
   filter: invert(var(--invert)) hue-rotate(var(--hue)); 
 }
 
@@ -36,5 +40,7 @@ video {
 picture img {
   filter: none;
 }
+
+${styles}
 `
 }

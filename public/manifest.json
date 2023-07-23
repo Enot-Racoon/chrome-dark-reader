@@ -12,8 +12,7 @@
   },
   "options_page": "settings.html",
   "action": {
-    "default_title": "Chrome Dark Reader",
-    "default_popup": "popup.html"
+    "default_title": "Chrome Dark Reader"
   },
   "content_scripts": [
     {
@@ -39,5 +38,5 @@
   "host_permissions": [
     "*://*/*"
   ],
-  "version": "0.1.1.4542"
+  "version": "0.1.1.4629"
 }

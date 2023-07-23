@@ -1,34 +1,29 @@
 import React from 'react'
 
-import * as settingsModel from 'entities/settings'
+import Preferences from 'entities/preferences'
 import { Button, Code } from 'shared/ui/components'
-import type { Settings } from 'shared/types/entities'
 
 import styles from './edit.module.css'
 
-export interface SettingsEditProps {
-  checked?: unknown
-}
-
-const stringifySetting = (settings: Settings.ISettings): string => {
+const stringifySetting = (settings: Preferences.IPreferences): string => {
   return JSON.stringify(settings, null, 2)
 }
 
-const SettingsEdit: React.FC<SettingsEditProps> = () => {
-  const { events, stores } = settingsModel.use()
-  const { value, loading, updating } = stores
-  const [settings, setSettings] = React.useState(stringifySetting(value))
+const SettingsEdit: React.FC = () => {
+  const { events, stores } = Preferences.use()
+  const { preferences, loading, updating } = stores
+  const [settings, setSettings] = React.useState(stringifySetting(preferences))
 
   React.useEffect(() => {
-    setSettings(stringifySetting(value))
-  }, [value])
+    setSettings(stringifySetting(preferences))
+  }, [preferences])
 
   const onSave = () => {
-    events.set(JSON.parse(settings) as Settings.ISettings)
+    events.update(JSON.parse(settings) as Preferences.IPreferences)
   }
 
-  const onReset = () => {
-    setSettings(JSON.stringify(value))
+  const onCancel = () => {
+    setSettings(JSON.stringify(settings))
   }
 
   if (loading) {
@@ -38,8 +33,7 @@ const SettingsEdit: React.FC<SettingsEditProps> = () => {
   return (
     <div className={styles.container}>
       <Code
-        width="90vw"
-        height="70vh"
+        height="calc(100vh - 116px)"
         value={settings}
         onChange={setSettings}
       />
@@ -47,8 +41,12 @@ const SettingsEdit: React.FC<SettingsEditProps> = () => {
         <Button className={styles.save} disabled={updating} onClick={onSave}>
           Save
         </Button>
-        <Button className={styles.cancel} disabled={updating} onClick={onReset}>
-          Reset
+        <Button
+          className={styles.cancel}
+          disabled={updating}
+          onClick={onCancel}
+        >
+          Cancel
         </Button>
       </div>
     </div>

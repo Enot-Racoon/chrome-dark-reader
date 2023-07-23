@@ -30,14 +30,14 @@ export class StorageRecord<T> implements IStorageRecord<T> {
     this._currentValue = this.clone(value)
   }
 
-  get = async (): Promise<T> => {
+  readonly get = async (): Promise<T> => {
     const currentValue = <T>await this.connector.get(this.key)
     this.currentValue = currentValue
 
     return currentValue
   }
 
-  set = async (value: T): Promise<T> => {
+  readonly set = async (value: T): Promise<T> => {
     let currentValue = this.currentValue
     if (equal(currentValue, value)) {
       return currentValue
@@ -50,15 +50,15 @@ export class StorageRecord<T> implements IStorageRecord<T> {
     return currentValue
   }
 
-  addChangeListener = (listener: IStorageMappedListener<T>) => {
+  readonly addChangeListener = (listener: IStorageMappedListener<T>) => {
     this.connector.addChangeListener(this.key, listener)
   }
 
-  removeChangeListener = (listener: IStorageMappedListener<T>) => {
+  readonly removeChangeListener = (listener: IStorageMappedListener<T>) => {
     this.connector.removeChangeListener(this.key, listener)
   }
 
-  private init = async (initValue: T): Promise<void> => {
+  private readonly init = async (initValue: T): Promise<void> => {
     const value = await this.get()
     if (value === null || value === undefined) {
       await this.set(initValue)
