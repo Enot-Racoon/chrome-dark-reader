@@ -30,7 +30,7 @@ export class MessageTransceiver<ListenerMap extends Types.BaseListenerMap> {
     type: Type
   ): void => void this.listenerMap.delete(type)
 
-  readonly tabDispatch = async <Type extends keyof ListenerMap>(
+  readonly dispatchTab = async <Type extends keyof ListenerMap>(
     tabId: number,
     type: Type,
     payload: Types.MessagePayload<ListenerMap[Type]>
@@ -38,13 +38,13 @@ export class MessageTransceiver<ListenerMap extends Types.BaseListenerMap> {
     return tabs.sendMessage(tabId, { type, payload })
   }
 
-  readonly tabsDispatch = async <Type extends keyof ListenerMap>(
+  readonly dispatchAllTabs = async <Type extends keyof ListenerMap>(
     tabIds: number[],
     type: Type,
     payload: Types.MessagePayload<ListenerMap[Type]>
   ): Promise<Array<Types.MessageResponse<ListenerMap[Type]> | null>> => {
     return Promise.allSettled(
-      tabIds.map(tabId => this.tabDispatch(tabId, type, payload))
+      tabIds.map(tabId => this.dispatchTab(tabId, type, payload))
     ).then(results =>
       results.map(result => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -53,7 +53,7 @@ export class MessageTransceiver<ListenerMap extends Types.BaseListenerMap> {
     )
   }
 
-  readonly runtimeDispatch = async <Type extends keyof ListenerMap>(
+  readonly dispatchRuntime = async <Type extends keyof ListenerMap>(
     type: Type,
     payload: Types.MessagePayload<ListenerMap[Type]>
   ): Promise<Types.MessageResponse<ListenerMap[Type]>> => {

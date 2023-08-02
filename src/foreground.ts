@@ -1,6 +1,10 @@
 import StyleInjector from 'shared/lib/style'
-import Preferences from 'entities/preferences'
+import Messenger from 'processes/messenger'
 
-setTimeout(Preferences.initialize)
+// Update tab style on update tab preferences in browser storage
+Messenger.hostPreferencesChanged.setListener(StyleInjector.toggleTabStyle)
 
-Preferences.data.tabPreferences.updates.watch(StyleInjector.toggleTabStyle)
+// Send message on foreground script start
+void Messenger.foregroundStart
+  .dispatchRuntime(location.host)
+  .then(StyleInjector.toggleTabStyle)

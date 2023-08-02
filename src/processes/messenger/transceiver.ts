@@ -1,19 +1,15 @@
 import MessageLib from 'shared/lib/chrome/message'
-import type Type from 'shared/types/chrome'
-
-type WithTime = { timestamp: number }
+import type Preferences from 'entities/preferences'
 
 type MessageMap = {
-  getActiveTab: [WithTime, Type.ChromeTab | null]
-  ping: [WithTime, string]
-  tabActivated: [Type.ChromeTab, void]
+  hostPreferencesChanged: [Preferences.IHostSettings, void]
 }
 
 export const transceiver = new MessageLib.MessageTransceiver<MessageMap>()
 
-export const tabActivated = new MessageLib.TypedMessage(
-  transceiver,
-  'tabActivated'
+export const hostPreferencesChanged = new MessageLib.TypedMessage(
+  'hostPreferencesChanged',
+  transceiver
 )
 
-export default Object.assign(transceiver, { tabActivated })
+export default Object.assign(transceiver, { hostPreferencesChanged })

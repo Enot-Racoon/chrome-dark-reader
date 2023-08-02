@@ -57,10 +57,8 @@ export class StorageRecord<T> implements IStorageRecord<T> {
 
   private readonly init = async (initValue: T): Promise<void> => {
     const value = await this.get()
-    if (value === null || value === undefined) {
-      await this.set(initValue)
-    }
+    if (value === null || value === undefined) await this.set(initValue)
   }
 
-  private clone = <Obj>(obj: Obj): Obj => <Obj>JSON.parse(JSON.stringify(obj))
+  private clone = (obj: T): T => <T>structuredClone(obj)
 }

@@ -1,7 +1,7 @@
 let styleEl: HTMLStyleElement
 
 export const toggleTabStyle = (tab: { enabled: boolean; styles: string }) => {
-  toggleAdditionalStyles(tab.enabled, tab.styles)
+  if (tab) toggleAdditionalStyles(tab.enabled, tab.styles)
 }
 
 export const toggleAdditionalStyles = (enabled: boolean, styles = '') => {

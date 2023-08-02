@@ -6,8 +6,8 @@ export class TypedMessage<
   Type extends keyof ListenerMap
 > {
   constructor(
-    private readonly transceiver: MessageTransceiver<ListenerMap>,
     private readonly type: Type,
+    private readonly transceiver: MessageTransceiver<ListenerMap>,
     private listener?: Types.MessageListener<ListenerMap[Type]>,
     startListen = true
   ) {
@@ -32,24 +32,24 @@ export class TypedMessage<
 
   readonly stopListen = (): void => this.transceiver.removeListener(this.type)
 
-  readonly tabDispatch = (
+  readonly dispatchTab = (
     tabId: number,
     payload: Types.MessagePayload<ListenerMap[Type]>
   ): Promise<Types.MessageResponse<ListenerMap[Type]>> => {
-    return this.transceiver.tabDispatch(tabId, this.type, payload)
+    return this.transceiver.dispatchTab(tabId, this.type, payload)
   }
 
-  readonly tabsDispatch = (
+  readonly dispatchAllTabs = (
     tabIds: number[],
     payload: Types.MessagePayload<ListenerMap[Type]>
   ): Promise<Array<Types.MessageResponse<ListenerMap[Type]> | null>> => {
-    return this.transceiver.tabsDispatch(tabIds, this.type, payload)
+    return this.transceiver.dispatchAllTabs(tabIds, this.type, payload)
   }
 
-  readonly runtimeDispatch = (
+  readonly dispatchRuntime = (
     payload: Types.MessagePayload<ListenerMap[Type]>
   ): Promise<Types.MessageResponse<ListenerMap[Type]>> => {
-    return this.transceiver.runtimeDispatch(this.type, payload)
+    return this.transceiver.dispatchRuntime(this.type, payload)
   }
 }
 
