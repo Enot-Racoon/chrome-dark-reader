@@ -69,7 +69,7 @@ export interface IStorageConnector<T> {
 
 export interface IStorageRecord<T> {
   readonly key: string
-  currentValue: T
+  readonly currentValue: T
 
   readonly get: () => Promise<T>
   readonly set: (value: T) => Promise<T>

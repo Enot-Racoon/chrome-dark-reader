@@ -26,7 +26,8 @@ chrome.tabs.onActivated.addListener(() => {
 // Update active tab on update change location
 chrome.tabs.onUpdated.addListener(
   (_, { status }, tab) =>
-    void (status === 'complete' && Preferences.tabActivated(tab))
+    // void (status === 'complete' && Preferences.tabActivated(tab))
+    void Preferences.tabActivated(tab)
 )
 
 // Send tab preferences on foreground script start

@@ -1,0 +1,224 @@
+{
+  "hosts": {
+    "blendermarket.com": {
+      "enabled": true,
+      "host": "blendermarket.com",
+      "styles": ""
+    },
+    "blog.kotlin-academy.com": {
+      "enabled": true,
+      "host": "blog.kotlin-academy.com",
+      "styles": ""
+    },
+    "blog.logrocket.com": {
+      "enabled": true,
+      "host": "blog.logrocket.com",
+      "styles": ""
+    },
+    "bugs.chromium.org": {
+      "enabled": true,
+      "host": "bugs.chromium.org",
+      "styles": ""
+    },
+    "chrome.google.com": {
+      "enabled": true,
+      "host": "chrome.google.com",
+      "styles": ""
+    },
+    "dev.to": {
+      "enabled": true,
+      "host": "dev.to",
+      "styles": ""
+    },
+    "developer.chrome.com": {
+      "enabled": true,
+      "host": "developer.chrome.com",
+      "styles": ""
+    },
+    "developers.refinitiv.com": {
+      "enabled": true,
+      "host": "developers.refinitiv.com",
+      "styles": ""
+    },
+    "disk.yandex.com": {
+      "enabled": true,
+      "host": "disk.yandex.com",
+      "styles": ""
+    },
+    "en.wikipedia.org": {
+      "enabled": true,
+      "host": "en.wikipedia.org",
+      "styles": ""
+    },
+    "extensions": {
+      "enabled": true,
+      "host": "extensions",
+      "styles": ""
+    },
+    "falloutfans.ru": {
+      "enabled": true,
+      "host": "falloutfans.ru",
+      "styles": ""
+    },
+    "forum.winehq.org": {
+      "enabled": true,
+      "host": "forum.winehq.org",
+      "styles": ""
+    },
+    "gameprogrammingpatterns.com": {
+      "enabled": true,
+      "host": "gameprogrammingpatterns.com",
+      "styles": ""
+    },
+    "games.mail.ru": {
+      "enabled": true,
+      "host": "games.mail.ru",
+      "styles": ""
+    },
+    "gnw.su": {
+      "enabled": true,
+      "host": "gnw.su",
+      "styles": ""
+    },
+    "gotplay.ru": {
+      "enabled": true,
+      "host": "gotplay.ru",
+      "styles": ""
+    },
+    "habr.com": {
+      "enabled": true,
+      "host": "habr.com",
+      "styles": ".tm-header { filter: invert(1) }"
+    },
+    "hh.ru": {
+      "enabled": true,
+      "host": "hh.ru",
+      "styles": ""
+    },
+    "itnext.io": {
+      "enabled": true,
+      "host": "itnext.io",
+      "styles": ""
+    },
+    "lea.verou.me": {
+      "enabled": true,
+      "host": "lea.verou.me",
+      "styles": ""
+    },
+    "opensource.com": {
+      "enabled": true,
+      "host": "opensource.com",
+      "styles": ""
+    },
+    "oterraria.ru": {
+      "enabled": true,
+      "host": "oterraria.ru",
+      "styles": ""
+    },
+    "otvet.mail.ru": {
+      "enabled": true,
+      "host": "otvet.mail.ru",
+      "styles": ""
+    },
+    "plugins.jetbrains.com": {
+      "enabled": true,
+      "host": "plugins.jetbrains.com",
+      "styles": ""
+    },
+    "qna.habr.com": {
+      "enabled": true,
+      "host": "qna.habr.com",
+      "styles": ""
+    },
+    "rutracker.org": {
+      "enabled": true,
+      "host": "rutracker.org",
+      "styles": ""
+    },
+    "share.effector.dev": {
+      "enabled": true,
+      "host": "share.effector.dev",
+      "styles": ""
+    },
+    "stackoverflow.com": {
+      "enabled": true,
+      "host": "stackoverflow.com",
+      "styles": ""
+    },
+    "superuser.com": {
+      "enabled": true,
+      "host": "superuser.com",
+      "styles": ""
+    },
+    "theoryandpractice.ru": {
+      "enabled": true,
+      "host": "theoryandpractice.ru",
+      "styles": ""
+    },
+    "translate.google.com": {
+      "enabled": true,
+      "host": "translate.google.com",
+      "styles": ""
+    },
+    "www.baeldung.com": {
+      "enabled": true,
+      "host": "www.baeldung.com",
+      "styles": ""
+    },
+    "www.cyberforum.ru": {
+      "enabled": true,
+      "host": "www.cyberforum.ru",
+      "styles": ""
+    },
+    "www.freecodecamp.org": {
+      "enabled": true,
+      "host": "www.freecodecamp.org",
+      "styles": ""
+    },
+    "www.gamersden.gg": {
+      "enabled": true,
+      "host": "www.gamersden.gg",
+      "styles": ""
+    },
+    "www.imore.com": {
+      "enabled": true,
+      "host": "www.imore.com",
+      "styles": ""
+    },
+    "www.javascripttutorial.net": {
+      "enabled": true,
+      "host": "www.javascripttutorial.net",
+      "styles": ""
+    },
+    "www.npmjs.com": {
+      "enabled": true,
+      "host": "www.npmjs.com",
+      "styles": "#app { background: invert(var(--invert)) hue-rotate(var(--hue)) }"
+    },
+    "www.programiz.com": {
+      "enabled": true,
+      "host": "www.programiz.com",
+      "styles": ""
+    },
+    "www.webopedia.com": {
+      "enabled": true,
+      "host": "www.webopedia.com",
+      "styles": ""
+    },
+    "www.yaklass.ru": {
+      "enabled": true,
+      "host": "www.yaklass.ru",
+      "styles": ""
+    },
+    "yandex.ru": {
+      "enabled": true,
+      "host": "yandex.ru",
+      "styles": ""
+    },
+    "yoip.ru": {
+      "enabled": true,
+      "host": "yoip.ru",
+      "styles": ".navbar-default { filter: invert(var(--invert)) hue-rotate(var(--hue)) }"
+    }
+  }
+}

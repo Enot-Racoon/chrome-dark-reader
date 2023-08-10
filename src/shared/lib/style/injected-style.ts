@@ -21,13 +21,13 @@ export const toggleAdditionalStyles = (enabled: boolean, styles = '') => {
   const cssVars =
     `--invert: ${enabled ? 1 : 0};` +
     `--hue: ${enabled ? 180 : 0}deg;` +
-    `--htmlbg: ${enabled ? '#000' : 'default'};`
+    `--background-color: ${enabled ? '#fff' : 'default'};`
 
   styleEl.innerHTML = `:root {${cssVars}}
 
 html, 
 iframe {
-  background-color: var(--color-bg);
+  background-color: var(--background-color);
   filter: invert(var(--invert)) hue-rotate(var(--hue)); 
 }
 
