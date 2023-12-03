@@ -21,13 +21,14 @@ module.exports = {
     project: true,
     tsconfigRootDir: __dirname,
   },
-  plugins: [
-    'prettier',
-    'react',
-    'react-hooks',
-    'promise',
-    '@typescript-eslint',
-    'jsx-a11y',
-  ],
-  rules: {},
+  plugins: ['prettier', 'react', 'react-hooks', 'promise', '@typescript-eslint', 'jsx-a11y'],
+  rules: {
+    'max-len': [
+      'warn',
+      {
+        code: 100,
+        ignoreComments: true,
+      },
+    ],
+  },
 }

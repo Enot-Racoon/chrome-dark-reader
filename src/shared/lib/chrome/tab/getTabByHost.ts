@@ -1,9 +1,6 @@
-import type ChromeTypes from 'shared/types/chrome'
+import type Chrome from 'shared/types/chrome'
 
-export const getTabByHost = (
-  tabs: ChromeTypes.ChromeTab[],
-  host: string
-): ChromeTypes.ChromeTab | null =>
-  tabs.find(t => new URL(t.url ?? '').host === host) ?? null
+export const getTabByHost = (tabs: Chrome.Tab[], host: string): Chrome.Tab | null =>
+  tabs.find(t => t.url && new URL(t.url).host === host) ?? null
 
 export default getTabByHost

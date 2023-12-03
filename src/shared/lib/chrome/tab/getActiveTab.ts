@@ -1,6 +1,4 @@
-export const getActiveTab = () =>
-  chrome.tabs
-    .query({ active: true, currentWindow: true })
-    .then(tabs => tabs.at(0) ?? null)
+import { tabs } from '../core'
 
-export default getActiveTab
+export const getActiveTab = () =>
+  tabs.query({ active: true, currentWindow: true }).then(tabs => tabs.at(0) ?? null)

@@ -19,14 +19,17 @@ export const toggleAdditionalStyles = (enabled: boolean, styles = '') => {
   }
 
   const cssVars =
-    `--invert: ${enabled ? 1 : 0};` +
+    `--invert: ${enabled ? 0.95 : 0};` +
     `--hue: ${enabled ? 180 : 0}deg;` +
-    `--background-color: ${enabled ? '#fff' : 'default'};`
+    `--background-color: ${enabled ? '#f2fafa' : 'default'};`
 
   styleEl.innerHTML = `:root {${cssVars}}
 
 html, 
 iframe {
+  transition-duration: 0.3s;
+  transition-timing-function: ease-out;
+  transition-property: filter background-color;
   background-color: var(--background-color);
   filter: invert(var(--invert)) hue-rotate(var(--hue)); 
 }

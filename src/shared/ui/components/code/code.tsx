@@ -13,12 +13,7 @@ export interface CodeProps {
   height?: string
 }
 
-export const Code: React.FC<CodeProps> = ({
-  value,
-  onChange,
-  width,
-  height,
-}) => (
+export const Code: React.FC<CodeProps> = ({ value, onChange, width, height }) => (
   <CodeMirror
     className={styles.container}
     value={value}

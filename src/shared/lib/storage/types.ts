@@ -1,15 +1,14 @@
+import type Chrome from 'shared/types/chrome'
+
 /**
  * Event from addListener('storage', (event: ILocalStorageEvent) => void)
  */
-export type ILocalStorageEvent = Pick<
-  StorageEvent,
-  'key' | 'newValue' | 'oldValue'
->
+export type ILocalStorageEvent = Pick<StorageEvent, 'key' | 'newValue' | 'oldValue'>
 /**
- * Event from chrome.storage.onChange.addListener((event: ILocalStorageEvent) => void)
+ * Event from Chrome.storage.onChange.addListener()
  */
 export type IChromeStorageEvent = {
-  [key: string]: chrome.storage.StorageChange
+  [key: string]: Chrome.StorageChange
 }
 /**
  * Union of events from addListener and storage.onChange.addListener
@@ -18,9 +17,7 @@ export type IStorageChangeEvent = ILocalStorageEvent | IChromeStorageEvent
 /**
  * Union of event listeners for addListener and storage.onChange.addListener
  */
-export type IStorageChangeListener = <E extends IStorageChangeEvent>(
-  event: E
-) => void
+export type IStorageChangeListener = <E extends IStorageChangeEvent>(event: E) => void
 
 /**
  * Storage mapped event
@@ -49,22 +46,14 @@ export interface IStorageChangeController<T> {
     mapper: (...args: Parameters<L>) => IStorageMappedEvent<T>
   ) => L
 
-  readonly deleteListener: (
-    listener: IStorageMappedListener<T>
-  ) => IStorageChangeListener | null
+  readonly deleteListener: (listener: IStorageMappedListener<T>) => IStorageChangeListener | null
 }
 
 export interface IStorageConnector<T> {
   readonly get: (key: string) => Promise<T | null>
   readonly set: (key: string, value: T) => Promise<T>
-  readonly addChangeListener: (
-    key: string,
-    listener: IStorageMappedListener<T>
-  ) => void
-  readonly removeChangeListener: (
-    key: string,
-    listener: IStorageMappedListener<T>
-  ) => void
+  readonly addChangeListener: (key: string, listener: IStorageMappedListener<T>) => void
+  readonly removeChangeListener: (key: string, listener: IStorageMappedListener<T>) => void
 }
 
 export interface IStorageRecord<T> {

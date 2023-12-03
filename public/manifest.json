@@ -36,7 +36,7 @@
     "storage"
   ],
   "host_permissions": [
-    "*://*/*"
+    "<all_urls>"
   ],
-  "version": "1.0.0.4656"
+  "version": "1.0.0.4728"
 }

@@ -1,16 +1,7 @@
 export * as default from '.'
 
-import {
-  forward as forwardTo,
-  createEffect as createEffectEffector,
-  restore,
-} from 'effector'
-import type {
-  Effect as EffectEffector,
-  Subscription,
-  Unit,
-  Store,
-} from 'effector'
+import type { Effect as EffectEffector, Subscription, Unit, Store } from 'effector'
+import { forward as forwardTo, createEffect as createEffectEffector, restore } from 'effector'
 
 export interface Effect<T, R, E = Error> extends EffectEffector<T, R, E> {
   readonly forward: (to: Unit<T>) => Subscription

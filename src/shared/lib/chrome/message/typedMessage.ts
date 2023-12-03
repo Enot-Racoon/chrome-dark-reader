@@ -1,4 +1,5 @@
 import MessageTransceiver from './messageTransceiver'
+
 import type Types from './types'
 
 export class TypedMessage<
@@ -32,21 +33,21 @@ export class TypedMessage<
 
   readonly stopListen = (): void => this.transceiver.removeListener(this.type)
 
-  readonly dispatchTab = (
+  readonly dispatchToTab = (
     tabId: number,
     payload: Types.MessagePayload<ListenerMap[Type]>
   ): Promise<Types.MessageResponse<ListenerMap[Type]>> => {
     return this.transceiver.dispatchTab(tabId, this.type, payload)
   }
 
-  readonly dispatchAllTabs = (
+  readonly dispatchToAllTabs = (
     tabIds: number[],
     payload: Types.MessagePayload<ListenerMap[Type]>
   ): Promise<Array<Types.MessageResponse<ListenerMap[Type]> | null>> => {
     return this.transceiver.dispatchAllTabs(tabIds, this.type, payload)
   }
 
-  readonly dispatchRuntime = (
+  readonly dispatchBackend = (
     payload: Types.MessagePayload<ListenerMap[Type]>
   ): Promise<Types.MessageResponse<ListenerMap[Type]>> => {
     return this.transceiver.dispatchRuntime(this.type, payload)

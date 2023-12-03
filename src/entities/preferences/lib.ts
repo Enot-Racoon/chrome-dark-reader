@@ -8,12 +8,12 @@ import {
   combine,
   forward,
 } from 'shared/lib/store/effector'
-import type { ChromeTab } from 'shared/types/chrome'
+import type Chrome from 'shared/types/chrome'
 import type { IStorageRecord } from 'shared/lib/storage'
 
 import type { IPreferences, IHostSettings } from './types'
 
-export const getTabHost = ({ url }: ChromeTab) => (url ? new URL(url).host : '')
+export const getTabHost = ({ url }: Chrome.Tab) => (url ? new URL(url).host : '')
 
 const createEvents = () => {
   const setEnabled = createEvent<[host: string, enabled: boolean | null]>()
@@ -27,8 +27,8 @@ const createEvents = () => {
     enable: setEnabled.prepend((host: string) => [host, true]),
     disable: setEnabled.prepend((host: string) => [host, false]),
     toggle,
-    tabActivated: createEvent<ChromeTab>(),
-    iconClicked: toggle.prepend<ChromeTab>(getTabHost),
+    tabActivated: createEvent<Chrome.Tab>(),
+    iconClicked: toggle.prepend<Chrome.Tab>(getTabHost),
   }
 }
 
@@ -46,23 +46,15 @@ export const createDefaultHostSettings = (
   styles = ''
 ): IHostSettings => ({ host, enabled, styles })
 
-const createStores = (
-  events: Events,
-  effects: Effects,
-  defaultValue: IPreferences
-) => {
+const createStores = (events: Events, effects: Effects, defaultValue: IPreferences) => {
   const { host } = location
-  const preferences = createStore<IPreferences>(defaultValue).reset(
-    events.reset
-  )
-  const activeTab = createStore<ChromeTab | null>(null)
+  const preferences = createStore<IPreferences>(defaultValue).reset(events.reset)
+  const activeTab = createStore<Chrome.Tab | null>(null)
 
   return {
     preferences,
     activeTab,
-    tabPreferences: preferences.map(
-      ({ hosts }) => hosts[host] ?? createDefaultHostSettings(host)
-    ),
+    tabPreferences: preferences.map(({ hosts }) => hosts[host] ?? createDefaultHostSettings(host)),
     activeTabPreferences: combine(activeTab, preferences, (tab, { hosts }) => {
       return tab ? hosts[getTabHost(tab)] ?? null : null
     }),
@@ -97,8 +89,7 @@ export const createModel = (record: IStorageRecord<IPreferences>) => {
 
   stores.preferences.on(events.setEnabled, (state, [host, enabled]) => {
     if (host) {
-      const hostSettings: IHostSettings =
-        state.hosts[host] ?? createDefaultHostSettings(host)
+      const hostSettings: IHostSettings = state.hosts[host] ?? createDefaultHostSettings(host)
       return {
         ...state,
         hosts: {
@@ -116,9 +107,7 @@ export const createModel = (record: IStorageRecord<IPreferences>) => {
 
   // Sync with store
   stores.preferences.updates.watch(record.set)
-  record.addChangeListener(
-    ({ newValue }) => void (newValue && events.update(newValue))
-  )
+  record.addChangeListener(({ newValue }) => void (newValue && events.update(newValue)))
 
   return { gate, events, effects, stores }
 }

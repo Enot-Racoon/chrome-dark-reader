@@ -1,8 +1,5 @@
 import type { Event as EventEffector, Subscription, Unit } from 'effector'
-import {
-  createEvent as createEventEffector,
-  forward as forwardTo,
-} from 'effector'
+import { createEvent as createEventEffector, forward as forwardTo } from 'effector'
 
 export interface Event<T> extends EventEffector<T> {
   readonly forward: (to: Unit<T>) => Subscription

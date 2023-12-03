@@ -1,23 +1,24 @@
+import Chrome from 'shared/lib/chrome'
+
 import { StorageEventController } from '../controller'
 
 import type { IStorageConnector, IStorageMappedListener } from '../types'
 
 export class ChromeStorageConnector<T> implements IStorageConnector<T> {
-  private readonly storage = chrome.storage.sync
+  private readonly storage = Chrome.storage.sync
   private readonly eventController = new StorageEventController<T>()
 
-  readonly get = (key: string): Promise<T | null> => {
-    return this.storage.get(key).then(res => (res[key] as T) ?? null)
+  readonly get = async (key: string): Promise<T | null> => {
+    const res = await this.storage.get(key)
+    return (res[key] as T) ?? null
   }
 
-  readonly set = (key: string, value: T): Promise<T> => {
-    return this.storage.set({ [key]: value }).then(() => value)
+  readonly set = async (key: string, value: T): Promise<T> => {
+    await this.storage.set({ [key]: value })
+    return value
   }
 
-  readonly addChangeListener = (
-    key: string,
-    listener: IStorageMappedListener<T>
-  ): void => {
+  readonly addChangeListener = (key: string, listener: IStorageMappedListener<T>): void => {
     this.storage.onChanged.addListener(
       this.eventController.createListener(key, listener, ev => ({
         key,
@@ -27,10 +28,7 @@ export class ChromeStorageConnector<T> implements IStorageConnector<T> {
     )
   }
 
-  readonly removeChangeListener = (
-    key: string,
-    listener: IStorageMappedListener<T>
-  ): void => {
+  readonly removeChangeListener = (key: string, listener: IStorageMappedListener<T>): void => {
     const wrapperListener = this.eventController.deleteListener(listener)
     if (wrapperListener) {
       this.storage.onChanged.removeListener(wrapperListener)

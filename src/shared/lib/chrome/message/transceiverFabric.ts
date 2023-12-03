@@ -1,25 +1,25 @@
-import type ChromeTypes from 'shared/lib/chrome'
-import ChromeLib from 'shared/lib/chrome'
+import MessageTransceiver from './messageTransceiver'
+import TypedMessage from './typedMessage'
 
-export class TransceiverFabric<
-  ListenerMap extends ChromeTypes.BaseListenerMap
-> {
-  private readonly _transceiver: ChromeLib.MessageTransceiver<ListenerMap>
+import type { MessageListener, BaseListenerMap } from './types'
+
+export class TransceiverFabric<ListenerMap extends BaseListenerMap> {
+  private readonly _transceiver: MessageTransceiver<ListenerMap>
 
   constructor() {
-    this._transceiver = new ChromeLib.MessageTransceiver()
+    this._transceiver = new MessageTransceiver()
   }
 
-  get transceiver(): ChromeLib.MessageTransceiver<ListenerMap> {
+  get transceiver(): MessageTransceiver<ListenerMap> {
     return this._transceiver
   }
 
   readonly createDispatcher = <Type extends keyof ListenerMap>(
     type: Type,
-    listener?: ChromeLib.MessageListener<ListenerMap[Type]>,
+    listener?: MessageListener<ListenerMap[Type]>,
     startListen = true
-  ): ChromeLib.TypedMessage<ListenerMap, Type> =>
-    new ChromeLib.TypedMessage(type, this._transceiver, listener, startListen)
+  ): TypedMessage<ListenerMap, Type> =>
+    new TypedMessage(type, this._transceiver, listener, startListen)
 }
 
 export default TransceiverFabric

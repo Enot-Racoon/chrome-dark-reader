@@ -32,20 +32,12 @@ const SettingsEdit: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <Code
-        height="calc(100vh - 116px)"
-        value={settings}
-        onChange={setSettings}
-      />
+      <Code height="calc(100vh - 116px)" value={settings} onChange={setSettings} />
       <div className={styles.controls}>
         <Button className={styles.save} disabled={updating} onClick={onSave}>
           Save
         </Button>
-        <Button
-          className={styles.cancel}
-          disabled={updating}
-          onClick={onCancel}
-        >
+        <Button className={styles.cancel} disabled={updating} onClick={onCancel}>
           Cancel
         </Button>
       </div>

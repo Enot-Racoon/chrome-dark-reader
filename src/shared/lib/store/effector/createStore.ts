@@ -1,9 +1,5 @@
 import type { Store as StoreEffector, Subscription, Unit } from 'effector'
-import {
-  createStore as createStoreEffector,
-  createEvent,
-  forward as forwardTo,
-} from 'effector'
+import { createStore as createStoreEffector, createEvent, forward as forwardTo } from 'effector'
 
 export interface Store<T> extends StoreEffector<T> {
   readonly setState: (value: T) => void

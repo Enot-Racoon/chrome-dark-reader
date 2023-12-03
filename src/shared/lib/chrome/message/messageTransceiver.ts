@@ -1,7 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import tabs = chrome.tabs
-import runtime = chrome.runtime
-import MessageSender = runtime.MessageSender
+import Chrome from '../core'
 
 import type Types from './types'
 
@@ -13,12 +10,13 @@ export interface InnerMessage<Type extends Index, Payload> {
 export class MessageTransceiver<ListenerMap extends Types.BaseListenerMap> {
   private readonly listenerMap: Map<
     keyof ListenerMap,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     Types.MessageListener<any>
   >
 
   constructor() {
     this.listenerMap = new Map()
-    runtime.onMessage.addListener(this.handleMessage)
+    Chrome.runtime.onMessage.addListener(this.handleMessage)
   }
 
   readonly addListener = <Type extends keyof ListenerMap>(
@@ -26,16 +24,15 @@ export class MessageTransceiver<ListenerMap extends Types.BaseListenerMap> {
     listener: Types.MessageListener<ListenerMap[Type]>
   ): void => void this.listenerMap.set(type, listener)
 
-  readonly removeListener = <Type extends keyof ListenerMap>(
-    type: Type
-  ): void => void this.listenerMap.delete(type)
+  readonly removeListener = <Type extends keyof ListenerMap>(type: Type): void =>
+    void this.listenerMap.delete(type)
 
   readonly dispatchTab = async <Type extends keyof ListenerMap>(
     tabId: number,
     type: Type,
     payload: Types.MessagePayload<ListenerMap[Type]>
   ): Promise<Types.MessageResponse<ListenerMap[Type]>> => {
-    return tabs.sendMessage(tabId, { type, payload })
+    return Chrome.tabs.sendMessage(tabId, { type, payload })
   }
 
   readonly dispatchAllTabs = async <Type extends keyof ListenerMap>(
@@ -43,13 +40,12 @@ export class MessageTransceiver<ListenerMap extends Types.BaseListenerMap> {
     type: Type,
     payload: Types.MessagePayload<ListenerMap[Type]>
   ): Promise<Array<Types.MessageResponse<ListenerMap[Type]> | null>> => {
-    return Promise.allSettled(
-      tabIds.map(tabId => this.dispatchTab(tabId, type, payload))
-    ).then(results =>
-      results.map(result => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        return result.status === 'fulfilled' ? result.value : null
-      })
+    return Promise.allSettled(tabIds.map(tabId => this.dispatchTab(tabId, type, payload))).then(
+      results =>
+        results.map(result => {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+          return result.status === 'fulfilled' ? result.value : null
+        })
     )
   }
 
@@ -57,12 +53,12 @@ export class MessageTransceiver<ListenerMap extends Types.BaseListenerMap> {
     type: Type,
     payload: Types.MessagePayload<ListenerMap[Type]>
   ): Promise<Types.MessageResponse<ListenerMap[Type]>> => {
-    return runtime.sendMessage({ type, payload })
+    return Chrome.runtime.sendMessage({ type, payload })
   }
 
   private readonly handleMessage = (
     message: InnerMessage<keyof ListenerMap, unknown>,
-    sender: MessageSender,
+    sender: Chrome.Type.Message,
     sendResponse: (response: unknown) => void
   ): true => {
     const listener = this.listenerMap.get(message.type)

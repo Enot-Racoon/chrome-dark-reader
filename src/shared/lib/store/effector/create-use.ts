@@ -36,10 +36,7 @@ export const createUseEvents =
     ) as ICreateUseEventsReturnType<T>
 
 export const createUse =
-  <
-    Ev extends Record<string, Event<any>>,
-    St extends Record<string, Store<any>>
-  >(
+  <Ev extends Record<string, Event<any>>, St extends Record<string, Store<any>>>(
     events: Ev,
     stores: St,
     opts?: ICreateUseOpts
