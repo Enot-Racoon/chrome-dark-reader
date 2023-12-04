@@ -47,14 +47,12 @@ export const createDefaultHostSettings = (
 ): IHostSettings => ({ host, enabled, styles })
 
 const createStores = (events: Events, effects: Effects, defaultValue: IPreferences) => {
-  const { host } = location
   const preferences = createStore<IPreferences>(defaultValue).reset(events.reset)
   const activeTab = createStore<Chrome.Tab | null>(null)
 
   return {
     preferences,
     activeTab,
-    tabPreferences: preferences.map(({ hosts }) => hosts[host] ?? createDefaultHostSettings(host)),
     activeTabPreferences: combine(activeTab, preferences, (tab, { hosts }) => {
       return tab ? hosts[getTabHost(tab)] ?? null : null
     }),
@@ -89,18 +87,11 @@ export const createModel = (record: IStorageRecord<IPreferences>) => {
 
   stores.preferences.on(events.setEnabled, (state, [host, enabled]) => {
     if (host) {
-      const hostSettings: IHostSettings = state.hosts[host] ?? createDefaultHostSettings(host)
-      return {
-        ...state,
-        hosts: {
-          ...state.hosts,
-          [host]: {
-            ...hostSettings,
-            // toggle settings.enabled if argument enabled is null
-            enabled: enabled ?? !hostSettings.enabled,
-          },
-        },
+      if (!state.hosts[host]) {
+        state.hosts[host] = createDefaultHostSettings(host)
       }
+      // toggle enabled
+      state.hosts[host].enabled = !!enabled
     }
     return state
   })

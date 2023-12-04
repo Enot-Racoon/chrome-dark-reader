@@ -13,6 +13,8 @@ abstract class BackgroundController {
     disabled: 'disabled.png',
   }
 
+  private static readonly iconSwitcher = Chrome.createIconSwitcher(this.IconMap)
+
   static readonly start = () => {
     if (this.isStarted) {
       throw new Error('BackgroundController already started')
@@ -72,14 +74,12 @@ abstract class BackgroundController {
 
   private static readonly watchStoreChanges = () => {
     Preferences.data.activeTabPreferences.watch(activeTabPreferences => {
+      // Change icon on change active tab in store
+      this.iconSwitcher(activeTabPreferences?.enabled ? 'enabled' : 'disabled')
+
       const activeTab = Preferences.data.activeTab.getState()
 
       if (activeTab?.id && activeTabPreferences) {
-        // Change icon on change active tab in store
-        Preferences.data.activeTabPreferences
-          .map(tab => (tab?.enabled ? 'enabled' : 'disabled'))
-          .watch(Chrome.createIconSwitcher(this.IconMap))
-
         Utils.log('hostPreferencesChanged')({ activeTab, activeTabPreferences })
 
         void Messenger.hostPreferencesChanged
