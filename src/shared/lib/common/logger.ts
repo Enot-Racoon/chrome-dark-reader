@@ -16,3 +16,9 @@ export const logCallback =
     console.log(name, ...args)
     return cb(...args) as ReturnType<Fn>
   }
+
+export const createLogger = (filename: string) => ({
+  log: (name: string) => console.log.bind(console, filename, name),
+  info: (name: string) => console.info.bind(console, filename, name),
+  warn: (name: string) => console.warn.bind(console, filename, name),
+})

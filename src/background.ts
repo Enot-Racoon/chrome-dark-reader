@@ -5,6 +5,8 @@ import Messenger from 'services/messenger'
 import Chrome from 'shared/lib/chrome'
 import Utils from 'shared/lib/common'
 
+// const Logger = Utils.createLogger('background.ts')
+
 abstract class BackgroundController {
   private static isStarted = false
 
@@ -45,15 +47,14 @@ abstract class BackgroundController {
   }
 
   private static readonly onAppIconClick = (tab: Chrome.Type.Tab) => {
-    // Change icon on click app icon
-    Utils.log('onAppIconClick')(tab)
+    // Logger.log('onAppIconClick')(tab)
     void Preferences.iconClicked(tab)
   }
 
   private static readonly onTabActivate = (activateInfo: Chrome.Type.Tab.ActiveTabInfo) => {
     // Update active tab in store on browser tab activated
     void Chrome.getActiveTab().then(tab => {
-      Utils.log('onTabActivate')({ activateInfo, tab })
+      // Logger.log('onTabActivate')({ activateInfo, tab })
 
       void (tab && Preferences.tabActivated(tab))
     })
@@ -66,7 +67,7 @@ abstract class BackgroundController {
   ) => {
     // Update active tab in store ob browser tab reload
     if (changeInfo.status === Chrome.Type.Tab.TabStatusEnum.complete) {
-      Utils.log('onTabUpdate complete')({ tabId, changeInfo, tab })
+      // Logger.log('onTabUpdate complete')({ tabId, changeInfo, tab })
 
       Preferences.tabActivated(tab)
     }
@@ -74,13 +75,14 @@ abstract class BackgroundController {
 
   private static readonly watchStoreChanges = () => {
     Preferences.data.activeTabPreferences.watch(activeTabPreferences => {
+      // Logger.log('TYT!!!!')({ activeTabPreferences })
       // Change icon on change active tab in store
       this.iconSwitcher(activeTabPreferences?.enabled ? 'enabled' : 'disabled')
 
       const activeTab = Preferences.data.activeTab.getState()
 
       if (activeTab?.id && activeTabPreferences) {
-        Utils.log('hostPreferencesChanged')({ activeTab, activeTabPreferences })
+        // Logger.log('hostPreferencesChanged')({ activeTab, activeTabPreferences })
 
         void Messenger.hostPreferencesChanged
           .dispatchToTab(activeTab.id, activeTabPreferences)
@@ -94,75 +96,26 @@ abstract class BackgroundController {
   private static readonly listenForeground = () => {
     Messenger.foregroundStart.setListener(host => {
       // Send tab preferences on foreground script start
-      Utils.log('Send tab preferences on foreground script start')({ host })
+      // Logger.log('Send tab preferences on foreground script start')({ host })
 
-      return Preferences.data.preferences.map(({ hosts }) => hosts[host]).getState()
+      return Preferences.data.preferences
+        .map(({ hosts }) => hosts[host] ?? Preferences.createDefaultHostSettings(host))
+        .getState()
     })
   }
 
-  // private static enableSendPreferencesToForegroundOnStoreUpdate() {
-  //   // Send tab preferences on update preferences in browser storage
-  //   Preferences.data.activeTabPreferences.updates.watch(async activeTabPreferences => {
-  //     Utils.log('Preferences.data.activeTabPreferences.updates')(activeTabPreferences)
-  //
-  //     const activeTab = Preferences.data.activeTab.getState()
-  //     if (activeTabPreferences && activeTab?.id) {
-  //       const screenshot = await this.makeScreenshot(activeTab)
-  //       const hostPreferences = Object.assign({}, activeTabPreferences, {
-  //         screenshot,
-  //       })
-  //
-  //       // Send tab preferences to foreground
-  //       Messenger.hostPreferencesChanged
-  //         .dispatchToTab(activeTab.id, hostPreferences)
-  //         .catch(Utils.warn('Tab preferences was updated'))
-  //     }
-  //   })
-  //
-  //   // Preferences.data.preferences.updates.watch(async preferences => {
-  //   // const tab = await Chrome.getActiveTab()
-  //   //
-  //   // if (tab?.id) {
-  //   //   this.onTabPreferencesUpdate(tab)
-  //   //
-  //   //   const screenshot = await this.makeScreenshot(tab)
-  //   //
-  //   //   return Messenger.hostPreferencesChanged.dispatchToTab(
-  //   //     tab.id,
-  //   //     Object.assign({})
-  //   //   )
-  //   // }
-  //   //
-  //   // void Chrome.getAllTabs().then(allTabs => {
-  //   //   Object.values(preferences.hosts).forEach(hostPreferences => {
-  //   //     const tab = Chrome.getTabByHost(allTabs, hostPreferences.host)
-  //   //     if (tab?.id) {
-  //   //       this.onTabPreferencesUpdate(tab)
-  //   //
-  //   //       const { id: tabId } = tab
-  //   //       void this.makeScreenshot(tab).then(screenshot => {
-  //   //         Messenger.hostPreferencesChanged
-  //   //           // Send tab preferences to foreground
-  //   //           .dispatchToTab(
-  //   //             tabId,
-  //   //             Object.assign({}, hostPreferences, { screenshot })
-  //   //           )
-  //   //           .catch(Utils.warn('Tab preferences was updated'))
-  //   //       })
-  //   //     }
-  //   //   })
-  //   // })
-  //   // })
-  //
-  //   return this
-  // }
-  //
-
   private static makeScreenshot(tab: Chrome.Type.Tab): Promise<string> {
-    Utils.log('makeScreenshot')({ tab })
+    // Logger.log('makeScreenshot')({ tab })
 
     return Chrome.getTabScreenshot(tab.windowId, { format: 'png' })
   }
 }
 
 BackgroundController.start()
+
+// Preferences.data.preferences.watch(Logger.log('Preferences.data.preferences'))
+// Preferences.data.activeTab.watch(Logger.log('Preferences.data.activeTab'))
+// Preferences.data.activeTabPreferences.watch(Logger.log('Preferences.data.activeTabPreferences'))
+// Preferences.data.activeTabPreferences
+// .map(pref => pref?.enabled)
+// .watch(Logger.log('Preferences.data.activeTabPreferences 3222323'))

@@ -10,6 +10,7 @@ export * from './createEffect'
 export * from './createEvent'
 export * from './createStore'
 export * from './forward'
+export * from './memo'
 export * from './restore'
 
 export const returnPayload = <S, P>(_state: S, payload: P): P => payload

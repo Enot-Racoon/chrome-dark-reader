@@ -1,5 +1,3 @@
-export * as default from './lib'
-
 import {
   createGate,
   createEvent,
@@ -8,16 +6,22 @@ import {
   combine,
   forward,
 } from 'shared/lib/store/effector'
+import Utils, { pipe } from 'shared/lib/common'
 import type Chrome from 'shared/types/chrome'
 import type { IStorageRecord } from 'shared/lib/storage'
 
 import type { IPreferences, IHostSettings } from './types'
 
+export * as default from './lib'
+
 export const getTabHost = ({ url }: Chrome.Tab) => (url ? new URL(url).host : '')
 
+const ToggleFlag: TabEnabledType = null
+type TabEnabledType = boolean | null
+
 const createEvents = () => {
-  const setEnabled = createEvent<[host: string, enabled: boolean | null]>()
-  const toggle = setEnabled.prepend((host: string) => [host, null])
+  const setEnabled = createEvent<[host: string, enabled: TabEnabledType]>()
+  const toggle = setEnabled.prepend((host: string) => [host, ToggleFlag])
   return {
     initialize: createEvent<void>(),
     load: createEvent<void>(),
@@ -47,15 +51,18 @@ export const createDefaultHostSettings = (
 ): IHostSettings => ({ host, enabled, styles })
 
 const createStores = (events: Events, effects: Effects, defaultValue: IPreferences) => {
-  const preferences = createStore<IPreferences>(defaultValue).reset(events.reset)
   const activeTab = createStore<Chrome.Tab | null>(null)
+  const preferences = createStore<IPreferences>(defaultValue).reset(events.reset)
 
   return {
     preferences,
     activeTab,
+    /* memo( */
     activeTabPreferences: combine(activeTab, preferences, (tab, { hosts }) => {
-      return tab ? hosts[getTabHost(tab)] ?? null : null
+      const host = tab ? getTabHost(tab) : ''
+      return hosts[host] ?? createDefaultHostSettings(host)
     }),
+    /* ), */
     loading: effects.load.pending,
     updating: effects.update.pending,
     ready: combine(
@@ -83,16 +90,34 @@ export const createModel = (record: IStorageRecord<IPreferences>) => {
   forward(events.update, effects.update)
   forward([events.update, effects.load.doneData], stores.preferences)
 
-  forward(events.tabActivated, stores.activeTab)
+  stores.activeTab.on(events.tabActivated, (_state, payload) => {
+    return { ...payload, time: Date.now() }
+  })
 
   stores.preferences.on(events.setEnabled, (state, [host, enabled]) => {
     if (host) {
       if (!state.hosts[host]) {
         state.hosts[host] = createDefaultHostSettings(host)
       }
-      // toggle enabled
-      state.hosts[host].enabled = !!enabled
+      const hostState = state.hosts[host]
+      state = {
+        ...state,
+        hosts: {
+          ...state.hosts,
+          [host]: {
+            host: hostState.host,
+            enabled: !hostState.enabled,
+            styles: hostState.styles,
+          },
+        },
+      }
     }
+
+    Utils.log('lib.ts')(
+      'stores.preferences.on(events.setEnabled',
+      { host, enabled },
+      state.hosts[host]
+    )
     return state
   })
 
@@ -102,3 +127,11 @@ export const createModel = (record: IStorageRecord<IPreferences>) => {
 
   return { gate, events, effects, stores }
 }
+
+const sum = (a: number) => (b: number) => a + b
+const sub = (a: number) => (b: number) => a - b
+const mul = (a: number) => (b: number) => a * b
+const div = (a: number) => (b: number) => a / b
+
+// example
+export const x = pipe(sum(10)).to(sub(4)).to(div(2)).to(mul(3)).compute(1)

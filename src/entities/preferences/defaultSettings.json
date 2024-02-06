@@ -1,5 +1,10 @@
 {
   "hosts": {
+    "account.microsoft.com": {
+      "enabled": true,
+      "host": "account.microsoft.com",
+      "styles": ""
+    },
     "animista.net": {
       "enabled": true,
       "host": "animista.net",
@@ -55,9 +60,24 @@
       "host": "developers.refinitiv.com",
       "styles": ""
     },
+    "digiseller.market": {
+      "enabled": true,
+      "host": "digiseller.market",
+      "styles": ""
+    },
     "disk.yandex.com": {
       "enabled": true,
       "host": "disk.yandex.com",
+      "styles": ""
+    },
+    "disk.yandex.ru": {
+      "enabled": true,
+      "host": "disk.yandex.ru",
+      "styles": ""
+    },
+    "dzen.ru": {
+      "enabled": true,
+      "host": "dzen.ru",
       "styles": ""
     },
     "en.wikipedia.org": {
@@ -140,6 +160,11 @@
       "host": "localhost:8080",
       "styles": ""
     },
+    "mail.yandex.ru": {
+      "enabled": false,
+      "host": "mail.yandex.ru",
+      "styles": ""
+    },
     "medium.com": {
       "enabled": true,
       "host": "medium.com",
@@ -153,6 +178,21 @@
     "morioh.com": {
       "enabled": true,
       "host": "morioh.com",
+      "styles": ""
+    },
+    "myaccount.google.com": {
+      "enabled": true,
+      "host": "myaccount.google.com",
+      "styles": ""
+    },
+    "newtab": {
+      "enabled": false,
+      "host": "newtab",
+      "styles": ""
+    },
+    "nodes.io": {
+      "enabled": true,
+      "host": "nodes.io",
       "styles": ""
     },
     "opensource.com": {
@@ -170,6 +210,21 @@
       "host": "otvet.mail.ru",
       "styles": ""
     },
+    "pay.gmpays.com": {
+      "enabled": true,
+      "host": "pay.gmpays.com",
+      "styles": ""
+    },
+    "paypalych.com": {
+      "enabled": true,
+      "host": "paypalych.com",
+      "styles": ""
+    },
+    "plati.market": {
+      "enabled": true,
+      "host": "plati.market",
+      "styles": ""
+    },
     "plugins.jetbrains.com": {
       "enabled": true,
       "host": "plugins.jetbrains.com",
@@ -178,6 +233,11 @@
     "qna.habr.com": {
       "enabled": true,
       "host": "qna.habr.com",
+      "styles": ""
+    },
+    "reactflow.dev": {
+      "enabled": true,
+      "host": "reactflow.dev",
       "styles": ""
     },
     "rutracker.org": {
@@ -225,6 +285,11 @@
       "host": "www.baeldung.com",
       "styles": ""
     },
+    "www.cyberciti.biz": {
+      "enabled": true,
+      "host": "www.cyberciti.biz",
+      "styles": ""
+    },
     "www.cyberforum.ru": {
       "enabled": true,
       "host": "www.cyberforum.ru",
@@ -238,6 +303,11 @@
     "www.gamersden.gg": {
       "enabled": true,
       "host": "www.gamersden.gg",
+      "styles": ""
+    },
+    "www.grimm-jaud.de": {
+      "enabled": true,
+      "host": "www.grimm-jaud.de",
       "styles": ""
     },
     "www.imore.com": {
@@ -255,10 +325,20 @@
       "host": "www.lambdatest.com",
       "styles": ""
     },
+    "www.microsoft.com": {
+      "enabled": true,
+      "host": "www.microsoft.com",
+      "styles": ""
+    },
     "www.npmjs.com": {
       "enabled": true,
       "host": "www.npmjs.com",
       "styles": "#app { background: invert(var(--invert)) hue-rotate(var(--hue)) }"
+    },
+    "www.playground.ru": {
+      "enabled": true,
+      "host": "www.playground.ru",
+      "styles": ""
     },
     "www.programiz.com": {
       "enabled": true,
@@ -298,6 +378,11 @@
     "www.yaklass.ru": {
       "enabled": true,
       "host": "www.yaklass.ru",
+      "styles": ""
+    },
+    "ya.ru": {
+      "enabled": true,
+      "host": "ya.ru",
       "styles": ""
     },
     "yandex.ru": {
