@@ -1,4 +1,4 @@
-import App from '@/app'
+import renderApp from '@/app'
 import Settings from '@/views/settings'
 
-App(Settings)
+renderApp(Settings)

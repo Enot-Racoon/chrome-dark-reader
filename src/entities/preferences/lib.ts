@@ -70,7 +70,7 @@ export const createModel = (record: IStorageRecord<IPreferences>) => {
     target: preferences,
   })
 
-  activeTab.on(tabActivated, (_state, payload) => ({ ...payload, time: Date.now() }))
+  activeTab.on(tabActivated, (_state, payload) => payload)
 
   preferences.on(setEnabled, (state, [host, enabled]) => {
     if (!host) return state

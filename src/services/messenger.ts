@@ -3,7 +3,7 @@ import type { IHostSettings } from '@/entities/preferences/types'
 
 export type MessageMap = {
   foregroundStart: [host: string, preferences: IHostSettings]
-  hostPreferencesChanged: [preferences: IHostSettings, res: void]
+  hostPreferencesChanged: [preferences: IHostSettings]
 }
 
 const messenger = new Messenger<MessageMap>()

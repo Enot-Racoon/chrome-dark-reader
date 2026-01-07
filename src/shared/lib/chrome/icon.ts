@@ -13,5 +13,7 @@ type BaseStateMap = {
 export const createIconSwitcher = <StateMap extends BaseStateMap, State extends keyof StateMap>(
   stateMap: StateMap
 ) => {
-  return (state: State): void => void setIcon(stateMap[state])
+  return (state: State): void => {
+    setIcon(stateMap[state])
+  }
 }

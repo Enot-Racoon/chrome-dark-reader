@@ -1,6 +1,6 @@
-import * as Preferences from '@/entities/preferences/model'
-import Messenger from '@/services/messenger'
 import * as Chrome from '@/shared/lib/chrome'
+import Messenger from '@/services/messenger'
+import * as Preferences from '@/entities/preferences/model'
 
 const ICON_MAP = {
   enabled: 'enabled.png',
@@ -10,17 +10,17 @@ const ICON_MAP = {
 const iconSwitcher = Chrome.createIconSwitcher(ICON_MAP)
 
 const onAppIconClick = (tab: Chrome.Type.Tab) => {
-  void Preferences.iconClicked(tab)
+  Preferences.iconClicked(tab)
 }
 
 const onTabActivate = () => {
-  void Chrome.getActiveTab().then(tab => {
-    void (tab && Preferences.tabActivated(tab))
+  Chrome.getActiveTab().then(tab => {
+    tab && Preferences.tabActivated(tab)
   })
 }
 
 const injectCriticalStyle = (tabId: number) => {
-  void Chrome.scripting
+  Chrome.scripting
     .executeScript({
       target: { tabId },
       func: () => {
@@ -65,7 +65,7 @@ const watchStoreChanges = () => {
     const activeTab = Preferences.activeTab.getState()
 
     if (activeTab?.id && activeTabPreferences) {
-      void Messenger.hostPreferencesChanged
+      Messenger.hostPreferencesChanged
         .dispatchToTab(activeTab.id, activeTabPreferences)
         .catch(() => console.warn('Tab preferences was updated'))
     }
@@ -82,7 +82,7 @@ const listenForeground = () => {
   })
 }
 
-const bootstrap = () => {
+const main = () => {
   // Listen Browser Actions
   Chrome.action.onClicked.addListener(onAppIconClick)
   Chrome.tabs.onActivated.addListener(onTabActivate)
@@ -93,7 +93,7 @@ const bootstrap = () => {
   listenForeground()
 
   // Init model
-  setTimeout(Preferences.initialize)
+  Preferences.initialize()
 }
 
-bootstrap()
+main()

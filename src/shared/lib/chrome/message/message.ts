@@ -52,7 +52,7 @@ export class Messenger<ListenerMap extends Types.BaseListenerMap> {
       ) => {
         const listener = this.listenerMap.get(message.type)
         if (listener) {
-          void Promise.resolve(listener(message.payload, sender)).then(sendResponse)
+          Promise.resolve(listener(message.payload, sender)).then(sendResponse)
         }
         return true
       }
