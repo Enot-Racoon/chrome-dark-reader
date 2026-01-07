@@ -10,8 +10,7 @@ const stringifySetting = (settings: Preferences.IPreferences): string => {
 }
 
 const SettingsEdit: React.FC = () => {
-  const { events, stores } = Preferences.use()
-  const { preferences, loading, updating } = stores
+  const { preferences, loading, updating, update } = Preferences.use()
   const [settings, setSettings] = React.useState(stringifySetting(preferences))
 
   React.useEffect(() => {
@@ -19,7 +18,7 @@ const SettingsEdit: React.FC = () => {
   }, [preferences])
 
   const onSave = () => {
-    events.update(JSON.parse(settings) as Preferences.IPreferences)
+    update(JSON.parse(settings) as Preferences.IPreferences)
   }
 
   const onCancel = () => {

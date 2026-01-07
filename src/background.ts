@@ -67,7 +67,7 @@ const watchStoreChanges = () => {
   Preferences.data.activeTabPreferences.watch(activeTabPreferences => {
     iconSwitcher(activeTabPreferences?.enabled ? 'enabled' : 'disabled')
 
-    const activeTab = Preferences.data.activeTab.getState()
+    const activeTab = Preferences.activeTab.getState()
 
     if (activeTab?.id && activeTabPreferences) {
       void Messenger.hostPreferencesChanged
@@ -81,7 +81,7 @@ const watchStoreChanges = () => {
 
 const listenForeground = () => {
   Messenger.foregroundStart.setListener(host => {
-    return Preferences.data.preferences
+    return Preferences.preferences
       .map(({ hosts }) => hosts[host] ?? Preferences.createDefaultHostSettings(host))
       .getState()
   })
