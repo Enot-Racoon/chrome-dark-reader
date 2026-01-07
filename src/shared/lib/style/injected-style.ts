@@ -17,7 +17,6 @@ export const toggleAdditionalStyles = (enabled: boolean, styles = '') => {
       htmlEl.appendChild(styleEl)
     }
   }
-
   const cssVars =
     `--invert: ${enabled ? 0.95 : 0};` +
     `--hue: ${enabled ? 180 : 0}deg;` +

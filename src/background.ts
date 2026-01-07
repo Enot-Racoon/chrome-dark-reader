@@ -17,6 +17,10 @@ abstract class BackgroundController {
 
   private static readonly iconSwitcher = Chrome.createIconSwitcher(this.IconMap)
 
+  private constructor() {
+    //
+  }
+
   static readonly start = () => {
     if (this.isStarted) {
       throw new Error('BackgroundController already started')
@@ -119,3 +123,5 @@ BackgroundController.start()
 // Preferences.data.activeTabPreferences
 // .map(pref => pref?.enabled)
 // .watch(Logger.log('Preferences.data.activeTabPreferences 3222323'))
+
+// class X extends BackgroundController {}
