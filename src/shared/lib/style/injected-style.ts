@@ -38,12 +38,8 @@ export const toggleAdditionalStyles = (enabled: boolean, styles = '') => {
 
 html {
   background-color: var(--dr-bg-color) !important;
-  transition: background-color var(--dr-transition);
-}
-
-/* Global inversion */
-html {
   filter: invert(var(--dr-invert)) hue-rotate(var(--dr-hue));
+  transition: filter var(--dr-transition), background-color var(--dr-transition);
 }
 
 /* Revert inversion for media elements to preserve original colors */
@@ -55,6 +51,7 @@ canvas,
 [style*="background: url"],
 svg:not(:root) {
   filter: invert(var(--dr-invert)) hue-rotate(calc(var(--dr-hue) * -1)) !important;
+  transition: filter var(--dr-transition);
 }
 
 /* Fix for nested elements and special cases */
