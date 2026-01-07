@@ -48,6 +48,7 @@
     "dev": "vite",
     "build": "bun run build:clean && vite build",
     "build:clean": "rimraf build",
+    "package": "bun run build && cd build && zip -r ../extension.zip .",
     "lint": "eslint src"
   },
   "eslintConfig": {
