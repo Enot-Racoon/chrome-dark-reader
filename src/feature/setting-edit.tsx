@@ -1,6 +1,6 @@
 import { useState, useEffect, type FC } from 'react'
 
-import { Code } from '@/shared/ui/code'
+import { CodeEditor } from '@/shared/ui/codeEditor'
 import { Button } from '@/shared/ui/button'
 import * as Preferences from '@/entities/preferences/model'
 import type { IPreferences } from '@/entities/preferences/types'
@@ -33,7 +33,7 @@ const SettingsEdit: FC = () => {
 
   return (
     <div className={styles.container}>
-      <Code height="calc(100vh - 116px)" value={settings} onChange={setSettings} />
+      <CodeEditor height="calc(100vh - 116px)" value={settings} onChange={setSettings} />
       <div className={styles.controls}>
         <Button className={styles.save} disabled={updating} onClick={onSave}>
           Save

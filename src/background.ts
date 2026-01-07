@@ -14,7 +14,7 @@ const onAppIconClick = (tab: Chrome.Type.Tab) => {
 }
 
 const onTabActivate = () => {
-  Chrome.getActiveTab().then(tab => {
+  void Chrome.getActiveTab().then(tab => {
     tab && Preferences.tabActivated(tab)
   })
 }
@@ -65,7 +65,7 @@ const watchStoreChanges = () => {
     const activeTab = Preferences.activeTab.getState()
 
     if (activeTab?.id && activeTabPreferences) {
-      Messenger.hostPreferencesChanged
+      void Messenger.hostPreferencesChanged
         .dispatchToTab(activeTab.id, activeTabPreferences)
         .catch(() => console.warn('Tab preferences was updated'))
     }

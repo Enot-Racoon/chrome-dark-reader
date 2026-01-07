@@ -1,16 +1,19 @@
 .container {
+  display: flex;
+  flex-direction: column;
 }
 
 .controls {
-  @apply mt-4 flex gap-x-4;
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 1rem;
 }
 
 .save {
+  flex: 1;
 }
 
 .cancel {
-}
-
-.save,
-.cancel {
+  flex: 0 0 auto;
 }

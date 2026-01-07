@@ -14,6 +14,6 @@ export const createIconSwitcher = <StateMap extends BaseStateMap, State extends 
   stateMap: StateMap
 ) => {
   return (state: State): void => {
-    setIcon(stateMap[state])
+    void setIcon(stateMap[state])
   }
 }
