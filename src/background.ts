@@ -69,25 +69,50 @@ abstract class BackgroundController {
     changeInfo: Chrome.Type.Tab.ChangeTabInfo,
     tab: Chrome.Type.Tab
   ) => {
-    // Update active tab in store ob browser tab reload
-    if (changeInfo.status === Chrome.Type.Tab.TabStatusEnum.complete) {
-      // Logger.log('onTabUpdate complete')({ tabId, changeInfo, tab })
+    // Inject critical CSS as soon as the tab starts loading to prevent white flash
+    if (changeInfo.status === Chrome.Type.Tab.TabStatusEnum.loading && tab.url) {
+      const host = new URL(tab.url).host
+      const settings = Preferences.data.preferences
+        .map(({ hosts }) => hosts[host] ?? Preferences.createDefaultHostSettings(host))
+        .getState()
 
+      if (settings?.enabled) {
+        this.injectCriticalStyle(tabId)
+      }
+    }
+
+    // Update active tab in store on browser tab reload complete
+    if (changeInfo.status === Chrome.Type.Tab.TabStatusEnum.complete) {
       Preferences.tabActivated(tab)
     }
   }
 
+  private static readonly injectCriticalStyle = (tabId: number) => {
+    // This style is minimal but enough to hide the initial white background
+    const css = `
+      html { 
+        background-color: #f2fafa !important; 
+        filter: invert(0.95) hue-rotate(180deg) !important;
+      }
+    `
+    void Chrome.scripting
+      .insertCSS({
+        target: { tabId },
+        css,
+        origin: 'USER',
+      })
+      .catch(() => {
+        /* Ignore errors for internal pages where scripting is not allowed */
+      })
+  }
+
   private static readonly watchStoreChanges = () => {
     Preferences.data.activeTabPreferences.watch(activeTabPreferences => {
-      // Logger.log('TYT!!!!')({ activeTabPreferences })
-      // Change icon on change active tab in store
       this.iconSwitcher(activeTabPreferences?.enabled ? 'enabled' : 'disabled')
 
       const activeTab = Preferences.data.activeTab.getState()
 
       if (activeTab?.id && activeTabPreferences) {
-        // Logger.log('hostPreferencesChanged')({ activeTab, activeTabPreferences })
-
         void Messenger.hostPreferencesChanged
           .dispatchToTab(activeTab.id, activeTabPreferences)
           .catch(Utils.warn('Tab preferences was updated'))
@@ -99,29 +124,11 @@ abstract class BackgroundController {
 
   private static readonly listenForeground = () => {
     Messenger.foregroundStart.setListener(host => {
-      // Send tab preferences on foreground script start
-      // Logger.log('Send tab preferences on foreground script start')({ host })
-
       return Preferences.data.preferences
         .map(({ hosts }) => hosts[host] ?? Preferences.createDefaultHostSettings(host))
         .getState()
     })
   }
-
-  private static makeScreenshot(tab: Chrome.Type.Tab): Promise<string> {
-    // Logger.log('makeScreenshot')({ tab })
-
-    return Chrome.getTabScreenshot(tab.windowId, { format: 'png' })
-  }
 }
 
 BackgroundController.start()
-
-// Preferences.data.preferences.watch(Logger.log('Preferences.data.preferences'))
-// Preferences.data.activeTab.watch(Logger.log('Preferences.data.activeTab'))
-// Preferences.data.activeTabPreferences.watch(Logger.log('Preferences.data.activeTabPreferences'))
-// Preferences.data.activeTabPreferences
-// .map(pref => pref?.enabled)
-// .watch(Logger.log('Preferences.data.activeTabPreferences 3222323'))
-
-// class X extends BackgroundController {}

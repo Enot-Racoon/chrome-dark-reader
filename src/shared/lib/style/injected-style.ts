@@ -10,37 +10,68 @@ export const toggleAdditionalStyles = (enabled: boolean, styles = '') => {
   }
 
   if (!styleEl) {
-    const htmlEl = document.querySelector('html')
+    const htmlEl = document.documentElement
 
     if (htmlEl) {
       styleEl = document.createElement('style')
+      styleEl.id = 'dark-reader-style'
       htmlEl.appendChild(styleEl)
     }
   }
-  const cssVars =
-    `--invert: ${enabled ? 0.95 : 0};` +
-    `--hue: ${enabled ? 180 : 0}deg;` +
-    `--background-color: ${enabled ? '#f2fafa' : 'default'};`
 
-  styleEl.innerHTML = `:root {${cssVars}}
+  const invertValue = enabled ? 0.95 : 0
+  const hueValue = enabled ? 180 : 0
+  const bgColor = enabled ? '#f2fafa' : 'transparent'
 
-html, 
-iframe {
-  transition-duration: 0.3s;
-  transition-timing-function: ease-out;
-  transition-property: filter background-color;
-  background-color: var(--background-color);
-  filter: invert(var(--invert)) hue-rotate(var(--hue)); 
+  // Using textContent for security and CSS variables for flexible updates
+  styleEl.textContent = `
+:root {
+  --dr-invert: ${invertValue};
+  --dr-hue: ${hueValue}deg;
+  --dr-bg-color: ${bgColor};
+  --dr-transition: 0.3s ease-out;
+  color-scheme: ${enabled ? 'dark' : 'light'};
 }
 
+html {
+  background-color: var(--dr-bg-color) !important;
+  transition: background-color var(--dr-transition);
+}
+
+/* Global inversion */
+html {
+  filter: invert(var(--dr-invert)) hue-rotate(var(--dr-hue));
+}
+
+/* Revert inversion for media elements to preserve original colors */
 img,
 picture,
-video {
-  filter: invert(var(--invert)) hue-rotate(var(--hue)); 
+video,
+canvas,
+[style*="background-image"],
+[style*="background: url"],
+svg:not(:root) {
+  filter: invert(var(--dr-invert)) hue-rotate(calc(var(--dr-hue) * -1)) !important;
 }
 
+/* Fix for nested elements and special cases */
 picture img {
-  filter: none;
+  filter: none !important;
+}
+
+/* Darker scrollbars and native elements */
+::-webkit-scrollbar {
+  background-color: #2a2a2a;
+  color: #c5c5c5;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #454545;
+}
+
+iframe {
+  transition: filter var(--dr-transition);
+  filter: invert(var(--dr-invert)) hue-rotate(var(--dr-hue));
 }
 
 ${styles}

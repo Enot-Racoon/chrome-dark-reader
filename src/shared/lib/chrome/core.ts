@@ -1,3 +1,3 @@
 export * as default from '.'
 
-export const { tabs, runtime, action, storage } = chrome
+export const { tabs, runtime, action, storage, scripting } = chrome

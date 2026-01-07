@@ -63,7 +63,7 @@
   "scripts": {
     "dev": "vite",
     "build": "bun run build:clean && vite build",
-    "build:clean": "rimraf dist",
+    "build:clean": "rimraf build",
     "test": "vitest",
     "lint": "eslint src"
   },
