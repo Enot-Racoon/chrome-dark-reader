@@ -1,0 +1,114 @@
+.layout {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  height: calc(100% - 2em);
+  gap: 1rem;
+  font-size: 1.25rem;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-gray-dark);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.sidebarHeader {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hostList {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.5rem;
+}
+
+.hostItem {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+  color: var(--color-text);
+  opacity: 0.8;
+}
+
+.hostItem:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  opacity: 1;
+}
+
+.activeItem {
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+  opacity: 1;
+  font-weight: 600;
+}
+
+.activeItem:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.editorContainer {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-gray-dark);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.editorHeader {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.editorTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.editorContent {
+  flex: 1;
+  position: relative;
+}
+
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--color-gray);
+  font-style: italic;
+}
+
+.controls {
+  padding: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #4ade80;
+}
+
+.indicatorDisabled {
+  background-color: #94a3b8;
+}

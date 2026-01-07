@@ -1,6 +1,8 @@
+import { type IHostSettings } from '@/entities/preferences/types'
+
 let styleEl: HTMLStyleElement
 
-export const toggleTabStyle = (tab: { enabled: boolean; styles: string }) => {
+export const toggleTabStyle = (tab: IHostSettings | { enabled: boolean; styles: string }) => {
   if (tab) toggleAdditionalStyles(tab.enabled, tab.styles)
 }
 
@@ -9,36 +11,69 @@ export const toggleAdditionalStyles = (enabled: boolean, styles = '') => {
     return
   }
 
-  if (!styleEl) {
-    const htmlEl = document.querySelector('html')
+  const htmlEl = document.documentElement
+  if (!htmlEl) return
 
-    if (htmlEl) {
-      styleEl = document.createElement('style')
-      htmlEl.appendChild(styleEl)
-    }
+  // Clear critical styles set by background script
+  htmlEl.style.backgroundColor = ''
+  htmlEl.style.filter = ''
+
+  if (!styleEl) {
+    styleEl = document.createElement('style')
+    styleEl.id = 'dark-reader-style'
+    htmlEl.appendChild(styleEl)
   }
 
-  const cssVars =
-    `--invert: ${enabled ? 1 : 0};` +
-    `--hue: ${enabled ? 180 : 0}deg;` +
-    `--background-color: ${enabled ? '#fff' : 'default'};`
+  const invertValue = enabled ? 0.95 : 0
+  const hueValue = enabled ? 180 : 0
+  const bgColor = enabled ? '#f2fafa' : 'transparent'
 
-  styleEl.innerHTML = `:root {${cssVars}}
-
-html, 
-iframe {
-  background-color: var(--background-color);
-  filter: invert(var(--invert)) hue-rotate(var(--hue)); 
+  // Using textContent for security and CSS variables for flexible updates
+  styleEl.textContent = `
+:root {
+  --dr-invert: ${invertValue};
+  --dr-hue: ${hueValue}deg;
+  --dr-bg-color: ${bgColor};
+  --dr-transition: 0.3s ease-out;
+  color-scheme: ${enabled ? 'dark' : 'light'};
 }
 
+html {
+  background-color: var(--dr-bg-color) !important;
+  filter: invert(var(--dr-invert)) hue-rotate(var(--dr-hue));
+  transition: filter var(--dr-transition), background-color var(--dr-transition);
+}
+
+/* Revert inversion for media elements to preserve original colors */
 img,
 picture,
-video {
-  filter: invert(var(--invert)) hue-rotate(var(--hue)); 
+video,
+canvas,
+[style*="background-image"],
+[style*="background: url"],
+svg:not(:root) {
+  filter: invert(var(--dr-invert)) hue-rotate(calc(var(--dr-hue) * -1)) !important;
+  transition: filter var(--dr-transition);
 }
 
+/* Fix for nested elements and special cases */
 picture img {
-  filter: none;
+  filter: none !important;
+}
+
+/* Darker scrollbars and native elements */
+::-webkit-scrollbar {
+  background-color: #2a2a2a;
+  color: #c5c5c5;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #454545;
+}
+
+iframe {
+  transition: filter var(--dr-transition);
+  filter: invert(var(--dr-invert)) hue-rotate(var(--dr-hue));
 }
 
 ${styles}

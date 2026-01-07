@@ -8,7 +8,8 @@
     "128": "static/logo/logo-128.png"
   },
   "background": {
-    "service_worker": "static/js/background.js"
+    "service_worker": "src/background.ts",
+    "type": "module"
   },
   "options_page": "settings.html",
   "action": {
@@ -18,7 +19,7 @@
     {
       "all_frames": true,
       "js": [
-        "static/js/foreground.js"
+        "src/foreground.ts"
       ],
       "matches": [
         "http://*/*",
@@ -36,7 +37,7 @@
     "storage"
   ],
   "host_permissions": [
-    "*://*/*"
+    "<all_urls>"
   ],
-  "version": "1.0.0.4656"
+  "version": "1.0.0.4874"
 }

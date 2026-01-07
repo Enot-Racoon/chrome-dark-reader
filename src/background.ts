@@ -1,56 +1,99 @@
-import Preferences from 'entities/preferences'
-import ChromeLib from 'shared/lib/chrome'
-import Messenger from 'processes/messenger'
-import Utils from './shared/lib/common'
+import * as Chrome from '@/shared/lib/chrome'
+import Messenger from '@/services/messenger'
+import * as Preferences from '@/entities/preferences/model'
 
-// Change icon on click
-chrome.action.onClicked.addListener(Preferences.iconClicked)
+const ICON_MAP = {
+  enabled: 'enabled.png',
+  disabled: 'disabled.png',
+}
 
-// Change icon on change active tab
-Preferences.data.activeTabPreferences
-  .map(tab => (tab?.enabled ? 'true' : 'false'))
-  .watch(
-    ChromeLib.createIconSwitcher({
-      true: 'enabled.png',
-      false: 'disabled.png',
-    })
-  )
+const iconSwitcher = Chrome.createIconSwitcher(ICON_MAP)
 
-// Change active tab on change browser tab
-chrome.tabs.onActivated.addListener(() => {
-  void ChromeLib.getActiveTab().then(
-    tab => void (tab && Preferences.tabActivated(tab))
-  )
-})
+const onAppIconClick = (tab: Chrome.Type.Tab) => {
+  Preferences.iconClicked(tab)
+}
 
-// Update active tab on update change location
-chrome.tabs.onUpdated.addListener(
-  (_, { status }, tab) =>
-    // void (status === 'complete' && Preferences.tabActivated(tab))
-    void Preferences.tabActivated(tab)
-)
-
-// Send tab preferences on foreground script start
-Messenger.foregroundStart.setListener(host => {
-  return Preferences.data.preferences.map(({ hosts }) => hosts[host]).getState()
-})
-
-// Send tab preferences on update preferences in browser storage
-Preferences.data.preferences.updates.watch(preferences => {
-  void ChromeLib.getAllTabs().then(tabs => {
-    if (preferences) {
-      Object.values(preferences.hosts).forEach(hostPreferences => {
-        const tab = ChromeLib.getTabByHost(tabs, hostPreferences.host)
-        if (tab?.id)
-          void Messenger.dispatchTab(
-            tab.id,
-            'hostPreferencesChanged',
-            hostPreferences
-          ).catch(Utils.log('Tab preferences updated'))
-      })
-    }
+const onTabActivate = () => {
+  void Chrome.getActiveTab().then(tab => {
+    tab && Preferences.tabActivated(tab)
   })
-})
+}
 
-// Init model
-setTimeout(Preferences.initialize)
+const injectCriticalStyle = (tabId: number) => {
+  Chrome.scripting
+    .executeScript({
+      target: { tabId },
+      func: () => {
+        const html = document.documentElement
+        if (html) {
+          html.style.backgroundColor = '#f2fafa'
+          html.style.filter = 'invert(0.95) hue-rotate(180deg)'
+        }
+      },
+      injectImmediately: true,
+    })
+    .catch(() => {
+      /* Ignore errors for internal pages */
+    })
+}
+
+const onTabUpdate = (
+  tabId: number,
+  changeInfo: Chrome.Type.Tab.ChangeTabInfo,
+  tab: Chrome.Type.Tab
+) => {
+  if (changeInfo.status === Chrome.Type.Tab.TabStatusEnum.loading && tab.url) {
+    const host = new URL(tab.url).host
+    const settings = Preferences.data.preferences
+      .map(({ hosts }) => hosts[host] ?? Preferences.createDefaultHostSettings(host))
+      .getState()
+
+    if (settings?.enabled) {
+      injectCriticalStyle(tabId)
+    }
+  }
+
+  if (changeInfo.status === Chrome.Type.Tab.TabStatusEnum.complete) {
+    Preferences.tabActivated(tab)
+  }
+}
+
+const watchStoreChanges = () => {
+  Preferences.data.activeTabPreferences.watch(activeTabPreferences => {
+    iconSwitcher(activeTabPreferences?.enabled ? 'enabled' : 'disabled')
+
+    const activeTab = Preferences.activeTab.getState()
+
+    if (activeTab?.id && activeTabPreferences) {
+      void Messenger.hostPreferencesChanged
+        .dispatchToTab(activeTab.id, activeTabPreferences)
+        .catch(() => console.warn('Tab preferences was updated'))
+    }
+
+    return activeTabPreferences
+  })
+}
+
+const listenForeground = () => {
+  Messenger.foregroundStart.setListener((host: string) => {
+    return Preferences.preferences
+      .map(({ hosts }) => hosts[host] ?? Preferences.createDefaultHostSettings(host))
+      .getState()
+  })
+}
+
+const main = () => {
+  // Listen Browser Actions
+  Chrome.action.onClicked.addListener(onAppIconClick)
+  Chrome.tabs.onActivated.addListener(onTabActivate)
+  Chrome.tabs.onUpdated.addListener(onTabUpdate)
+
+  // Watch Store
+  watchStoreChanges()
+  listenForeground()
+
+  // Init model
+  Preferences.initialize()
+}
+
+main()

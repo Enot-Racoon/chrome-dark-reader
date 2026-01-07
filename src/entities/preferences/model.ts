@@ -1,29 +1,35 @@
-import Config from 'shared/config'
-import ModelLib from 'shared/lib/store'
-import StorageLib from 'shared/lib/storage'
+import Config from '@/shared/config'
+import * as ModelLib from '@/shared/lib/store/effector'
+import { StorageRecord, ChromeStorageConnector } from '@/shared/lib/storage'
 
-import lib from './lib'
-import type Type from './types'
+import * as lib from './lib'
+import type * as Type from './types'
 import defaultSettings from './defaultSettings.json'
 
 const defaultPreferences: Type.IPreferences = defaultSettings
 
-const settingsRecord = new StorageLib.StorageRecord(
+const settingsRecord = new StorageRecord(
   Config.STORAGE_KEY,
   defaultPreferences,
-  new StorageLib.ChromeStorageConnector()
+  new ChromeStorageConnector()
 )
 
 const model = lib.createModel(settingsRecord)
-const { preferences, activeTab, tabPreferences, activeTabPreferences } =
-  model.stores
 
-export const use = ModelLib.createUse(model.events, model.stores)
-export const useGate = ModelLib.createUseGate(model.gate)
-export const { initialize, tabActivated, iconClicked } = model.events
-export const data = {
-  preferences,
-  activeTab,
-  tabPreferences,
-  activeTabPreferences,
-}
+export const { createDefaultHostSettings } = lib
+export const { gate, events, effects, stores } = model
+export const { preferences, activeTab, activeTabPreferences } = stores
+export const { initialize, tabActivated, iconClicked, update } = events
+
+export const use = () =>
+  ModelLib.use({
+    preferences,
+    loading: stores.loading,
+    updating: stores.updating,
+    initialize,
+    update,
+  })
+
+export const useGate = (props?: Record<string, unknown>) => ModelLib.useGate(gate, props)
+
+export const data = stores

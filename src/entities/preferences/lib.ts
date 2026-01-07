@@ -1,44 +1,17 @@
-export * as default from './lib'
-
 import {
   createGate,
   createEvent,
   createEffect,
   createStore,
   combine,
-  forward,
-} from 'shared/lib/store/effector'
-import type { ChromeTab } from 'shared/types/chrome'
-import type { IStorageRecord } from 'shared/lib/storage'
+  sample,
+} from '@/shared/lib/store/effector'
+import type * as Chrome from '@/shared/types/chrome'
+import type { IStorageRecord } from '@/shared/lib/storage'
 
 import type { IPreferences, IHostSettings } from './types'
 
-export const getTabHost = ({ url }: ChromeTab) => (url ? new URL(url).host : '')
-
-const createEvents = () => {
-  const setEnabled = createEvent<[host: string, enabled: boolean | null]>()
-  const toggle = setEnabled.prepend((host: string) => [host, null])
-  return {
-    initialize: createEvent<void>(),
-    load: createEvent<void>(),
-    update: createEvent<IPreferences>(),
-    reset: createEvent<void>(),
-    setEnabled,
-    enable: setEnabled.prepend((host: string) => [host, true]),
-    disable: setEnabled.prepend((host: string) => [host, false]),
-    toggle,
-    tabActivated: createEvent<ChromeTab>(),
-    iconClicked: toggle.prepend<ChromeTab>(getTabHost),
-  }
-}
-
-const createEffects = () => ({
-  load: createEffect<void, IPreferences>(),
-  update: createEffect<IPreferences, IPreferences>(),
-})
-
-type Events = ReturnType<typeof createEvents>
-type Effects = ReturnType<typeof createEffects>
+export const getTabHost = ({ url }: Chrome.Tab): string => (url ? new URL(url).host : '')
 
 export const createDefaultHostSettings = (
   host: string,
@@ -46,79 +19,111 @@ export const createDefaultHostSettings = (
   styles = ''
 ): IHostSettings => ({ host, enabled, styles })
 
-const createStores = (
-  events: Events,
-  effects: Effects,
-  defaultValue: IPreferences
-) => {
-  const { host } = location
-  const preferences = createStore<IPreferences>(defaultValue).reset(
-    events.reset
-  )
-  const activeTab = createStore<ChromeTab | null>(null)
-
-  return {
-    preferences,
-    activeTab,
-    tabPreferences: preferences.map(
-      ({ hosts }) => hosts[host] ?? createDefaultHostSettings(host)
-    ),
-    activeTabPreferences: combine(activeTab, preferences, (tab, { hosts }) => {
-      return tab ? hosts[getTabHost(tab)] ?? null : null
-    }),
-    loading: effects.load.pending,
-    updating: effects.update.pending,
-    ready: combine(
-      effects.load.fulfilled,
-      effects.update.pending,
-      (loaded, saving) => loaded && !saving
-    ),
-  }
-}
-
 export const createModel = (record: IStorageRecord<IPreferences>) => {
   const gate = createGate()
 
-  const events = createEvents()
-  const effects = createEffects()
-  const stores = createStores(events, effects, record.currentValue)
+  // Events
+  const initialize = createEvent<void>()
+  const load = createEvent<void>()
+  const update = createEvent<IPreferences>()
+  const reset = createEvent<void>()
 
-  effects.load.use(record.get)
-  effects.update.use(record.set)
+  const setEnabled = createEvent<[host: string, enabled: boolean | null]>()
+  const enable = setEnabled.prepend((host: string) => [host, true])
+  const disable = setEnabled.prepend((host: string) => [host, false])
+  const toggle = setEnabled.prepend((host: string) => [host, null])
 
-  forward(gate.open, events.load)
-  forward(events.initialize, events.load)
+  const tabActivated = createEvent<Chrome.Tab>()
+  const iconClicked = toggle.prepend<Chrome.Tab>(getTabHost)
 
-  forward(events.load, effects.load)
-  forward(events.update, effects.update)
-  forward([events.update, effects.load.doneData], stores.preferences)
+  // Effects
+  const loadFx = createEffect<void, IPreferences>(record.get)
+  const updateFx = createEffect<IPreferences, IPreferences>(record.set)
 
-  forward(events.tabActivated, stores.activeTab)
+  // Stores
+  const activeTab = createStore<Chrome.Tab | null>(null)
+  const preferences = createStore<IPreferences>(record.currentValue).reset(reset)
 
-  stores.preferences.on(events.setEnabled, (state, [host, enabled]) => {
-    if (host) {
-      const hostSettings: IHostSettings =
-        state.hosts[host] ?? createDefaultHostSettings(host)
-      return {
-        ...state,
-        hosts: {
-          ...state.hosts,
-          [host]: {
-            ...hostSettings,
-            // toggle settings.enabled if argument enabled is null
-            enabled: enabled ?? !hostSettings.enabled,
-          },
+  const activeTabPreferences = combine(activeTab, preferences, (tab, { hosts }) => {
+    const host = tab ? getTabHost(tab) : ''
+    return hosts[host] ?? createDefaultHostSettings(host)
+  })
+
+  // Logic
+  sample({
+    clock: [gate.open, initialize],
+    target: load,
+  })
+
+  sample({
+    clock: load,
+    target: loadFx,
+  })
+
+  sample({
+    clock: update,
+    target: updateFx,
+  })
+
+  sample({
+    clock: [updateFx.doneData, loadFx.doneData],
+    target: preferences,
+  })
+
+  activeTab.on(tabActivated, (_state, payload) => payload)
+
+  preferences.on(setEnabled, (state, [host, enabled]) => {
+    if (!host) return state
+
+    const hostState = state.hosts[host] ?? createDefaultHostSettings(host)
+    const nextEnabled = enabled === null ? !hostState.enabled : enabled
+
+    return {
+      ...state,
+      hosts: {
+        ...state.hosts,
+        [host]: {
+          ...hostState,
+          enabled: nextEnabled,
         },
-      }
+      },
     }
-    return state
   })
 
   // Sync with store
-  stores.preferences.updates.watch(record.set)
-  record.addChangeListener(
-    ({ newValue }) => void (newValue && events.update(newValue))
-  )
+  sample({
+    clock: preferences.updates,
+    target: updateFx,
+  })
 
-  return { gate, events, effects, stores }
+  record.addChangeListener(({ newValue }) => {
+    if (newValue) update(newValue)
+  })
+
+  return {
+    gate,
+    events: {
+      initialize,
+      load,
+      update,
+      reset,
+      setEnabled,
+      enable,
+      disable,
+      toggle,
+      tabActivated,
+      iconClicked,
+    },
+    effects: {
+      load: loadFx,
+      update: updateFx,
+    },
+    stores: {
+      preferences,
+      activeTab,
+      activeTabPreferences,
+      loading: loadFx.pending,
+      updating: updateFx.pending,
+    },
+  }
 }

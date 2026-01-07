@@ -1,56 +1,40 @@
 import equal from 'fast-deep-equal'
-
-import type {
-  IStorageConnector,
-  IStorageMappedListener,
-  IStorageRecord,
-} from './types'
+import type { IStorageConnector, IStorageMappedListener, IStorageRecord } from './types'
 
 export class StorageRecord<T> implements IStorageRecord<T> {
-  readonly key: string
   private _currentValue: T
-  private readonly connector: IStorageConnector<T>
+
+  constructor(
+    readonly key: string,
+    initValue: T,
+    private readonly connector: IStorageConnector<T>
+  ) {
+    this._currentValue = initValue
+    void this.connector.get(key).then(val => {
+      if (val !== null && val !== undefined) {
+        this._currentValue = val
+      }
+    })
+  }
 
   get currentValue(): T {
-    return <T>structuredClone(this._currentValue)
-  }
-
-  constructor(key: string, initValue: T, connector: IStorageConnector<T>) {
-    this.key = key
-    this.connector = connector
-    this._currentValue = <T>structuredClone(initValue)
-
-    void this.restore(initValue)
-  }
-
-  private readonly restore = async (initValue: T): Promise<void> => {
-    const value = await this.get()
-    console.log('StorageRecord.restore', { initValue, value })
-    if (value !== null && value !== undefined) {
-      this._currentValue = value
-    } else {
-      await this.set(initValue)
-    }
+    return this._currentValue
   }
 
   readonly get = async (): Promise<T> => {
-    const currentValue = this._currentValue
-    this._currentValue = <T>await this.connector.get(this.key)
-    console.log('StorageRecord.get', {
-      currentValue,
-      value: this._currentValue,
-    })
-    return this.currentValue
+    const val = await this.connector.get(this.key)
+    if (val !== null && val !== undefined) {
+      this._currentValue = val
+    }
+    return this._currentValue
   }
 
   readonly set = async (value: T): Promise<T> => {
-    console.log('StorageRecord.set', {
-      currentValue: this._currentValue,
-      value,
-    })
-    if (value && equal(this._currentValue, value)) return this._currentValue
+    if (equal(this._currentValue, value)) {
+      return this._currentValue
+    }
     this._currentValue = await this.connector.set(this.key, value)
-    return this.currentValue
+    return this._currentValue
   }
 
   readonly addChangeListener = (listener: IStorageMappedListener<T>) => {

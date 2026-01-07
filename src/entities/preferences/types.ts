@@ -1,5 +1,3 @@
-export * as default from './types'
-
 export interface IPreferences {
   readonly hosts: Record<string, IHostSettings>
 }
