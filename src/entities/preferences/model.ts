@@ -1,6 +1,6 @@
 import Config from '@/shared/config'
 import * as ModelLib from '@/shared/lib/store/effector'
-import StorageLib from '@/shared/lib/storage'
+import { StorageRecord, ChromeStorageConnector } from '@/shared/lib/storage'
 
 import * as lib from './lib'
 import type * as Type from './types'
@@ -8,10 +8,10 @@ import defaultSettings from './defaultSettings.json'
 
 const defaultPreferences: Type.IPreferences = defaultSettings
 
-const settingsRecord = new StorageLib.StorageRecord(
+const settingsRecord = new StorageRecord(
   Config.STORAGE_KEY,
   defaultPreferences,
-  new StorageLib.ChromeStorageConnector()
+  new ChromeStorageConnector()
 )
 
 const model = lib.createModel(settingsRecord)
