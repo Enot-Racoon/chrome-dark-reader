@@ -27,7 +27,7 @@ export default defineConfig(({ command }) => {
     // Update the file so it's committed correctly
     writeFileSync(manifestPath, JSON.stringify(manifestData, null, 2))
 
-    console.log(`\n\x1b[32m✓\x1b[0m Bumped extension version to: \x1b[1m${newVersion}\x1b[0m\n`)
+    console.log(`\n\x1b[32m✓\x1b[0m Bumped extension version to: \x1b[34m${newVersion}\x1b[0m\n`)
   }
 
   return {
@@ -45,6 +45,7 @@ export default defineConfig(({ command }) => {
     },
     build: {
       outDir: 'build',
+      chunkSizeWarningLimit: 1000,
       rollupOptions: {
         input: {
           settings: resolve(__dirname, 'settings.html'),

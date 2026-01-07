@@ -24,6 +24,19 @@ const SettingsEdit: FC = () => {
     setLocalSettings({ ...preferences.hosts[host] })
   }
 
+  // Sync local state when global preferences change (e.g. after toggle enabled)
+  useEffect(() => {
+    if (selectedHost && preferences.hosts[selectedHost]) {
+      setLocalSettings(prev => {
+        if (!prev) return { ...preferences.hosts[selectedHost] }
+        return {
+          ...prev,
+          enabled: preferences.hosts[selectedHost].enabled,
+        }
+      })
+    }
+  }, [preferences.hosts, selectedHost])
+
   const onAddHost = () => {
     const host = window.prompt('Enter host (e.g. google.com or *.google.com):')
     if (host && !preferences.hosts[host]) {
@@ -82,8 +95,21 @@ const SettingsEdit: FC = () => {
   }, [selectedHost, localSettings, preferences])
 
   const onToggleEnabled = () => {
-    if (localSettings) {
-      setLocalSettings({ ...localSettings, enabled: !localSettings.enabled })
+    if (selectedHost && localSettings) {
+      const newEnabled = !preferences.hosts[selectedHost]?.enabled
+      // Optimistic update for UI responsiveness
+      setLocalSettings({ ...localSettings, enabled: newEnabled })
+
+      update({
+        ...preferences,
+        hosts: {
+          ...preferences.hosts,
+          [selectedHost]: {
+            ...preferences.hosts[selectedHost],
+            enabled: newEnabled,
+          },
+        },
+      })
     }
   }
 
