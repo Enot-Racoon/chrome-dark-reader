@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import Preferences from 'entities/preferences'
+import * as Preferences from 'entities/preferences'
 import Messenger from 'services/messenger'
-import Chrome from 'shared/lib/chrome'
-import Utils from 'shared/lib/common'
+import * as Chrome from 'shared/lib/chrome'
+import * as Utils from 'shared/lib/common'
 
 // const Logger = Utils.createLogger('background.ts')
 

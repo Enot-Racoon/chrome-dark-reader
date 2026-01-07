@@ -1,9 +1,9 @@
 import Config from 'shared/config'
-import ModelLib from 'shared/lib/store'
+import * as ModelLib from 'shared/lib/store'
 import StorageLib from 'shared/lib/storage'
 
-import lib from './lib'
-import type Type from './types'
+import * as lib from './lib'
+import type * as Type from './types'
 import defaultSettings from './defaultSettings.json'
 
 const defaultPreferences: Type.IPreferences = defaultSettings

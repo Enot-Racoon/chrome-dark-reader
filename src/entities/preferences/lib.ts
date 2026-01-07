@@ -6,14 +6,12 @@ import {
   combine,
   sample,
 } from 'shared/lib/store/effector'
-import type Chrome from 'shared/types/chrome'
+import type * as Chrome from 'shared/types/chrome'
 import type { IStorageRecord } from 'shared/lib/storage'
 
 import type { IPreferences, IHostSettings } from './types'
 
-export * as default from './lib'
-
-export const getTabHost = ({ url }: Chrome.Tab) => (url ? new URL(url).host : '')
+export const getTabHost = ({ url }: Chrome.Tab): string => (url ? new URL(url).host : '')
 
 export const createDefaultHostSettings = (
   host: string,

@@ -1,5 +1,5 @@
-export * as default from '.'
+import * as logger from './logger'
 
-export * from './functional'
-export * from './deepEqual'
 export * from './logger'
+
+export default logger

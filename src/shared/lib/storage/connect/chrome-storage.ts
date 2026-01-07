@@ -1,12 +1,12 @@
-import Chrome from 'shared/lib/chrome'
-
-import { StorageEventController } from '../controller'
-
-import type { IStorageConnector, IStorageMappedListener } from '../types'
+import * as Chrome from 'shared/lib/chrome'
+import type { IStorageConnector, IStorageMappedListener, IStorageMappedEvent } from '../types'
 
 export class ChromeStorageConnector<T> implements IStorageConnector<T> {
   private readonly storage = Chrome.storage.local
-  private readonly eventController = new StorageEventController<T>()
+  private readonly listenerMap = new Map<
+    IStorageMappedListener<T>,
+    (changes: Record<string, any>) => void
+  >()
 
   readonly get = async (key: string): Promise<T | null> => {
     const res = await this.storage.get(key)
@@ -19,19 +19,26 @@ export class ChromeStorageConnector<T> implements IStorageConnector<T> {
   }
 
   readonly addChangeListener = (key: string, listener: IStorageMappedListener<T>): void => {
-    this.storage.onChanged.addListener(
-      this.eventController.createListener(key, listener, ev => ({
-        key,
-        newValue: ev[key]?.newValue as T,
-        oldValue: ev[key]?.oldValue as T,
-      }))
-    )
+    const wrappedListener = (changes: Record<string, Chrome.Type.StorageChange>) => {
+      const change = changes[key]
+      if (change) {
+        const event: IStorageMappedEvent<T> = {
+          key,
+          newValue: change.newValue as T,
+          oldValue: change.oldValue as T,
+        }
+        listener(event)
+      }
+    }
+    this.listenerMap.set(listener, wrappedListener)
+    this.storage.onChanged.addListener(wrappedListener)
   }
 
   readonly removeChangeListener = (key: string, listener: IStorageMappedListener<T>): void => {
-    const wrapperListener = this.eventController.deleteListener(listener)
-    if (wrapperListener) {
-      this.storage.onChanged.removeListener(wrapperListener)
+    const wrappedListener = this.listenerMap.get(listener)
+    if (wrappedListener) {
+      this.storage.onChanged.removeListener(wrappedListener)
+      this.listenerMap.delete(listener)
     }
   }
 }

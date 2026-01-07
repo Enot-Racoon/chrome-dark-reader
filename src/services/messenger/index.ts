@@ -1,18 +1,14 @@
-import MessageLib from 'shared/lib/chrome/message'
-import type Preferences from 'entities/preferences'
-
-export type IHostSettingsWithScreenshot = Preferences.IHostSettings & {
-  screenshot?: string | null
-}
+import { Messenger } from '../../shared/lib/chrome/message'
+import type { IHostSettings } from 'entities/preferences'
 
 export type MessageMap = {
-  foregroundStart: [host: string, preferences: Preferences.IHostSettings]
-  hostPreferencesChanged: [preferences: IHostSettingsWithScreenshot, res: void]
+  foregroundStart: [host: string, preferences: IHostSettings]
+  hostPreferencesChanged: [preferences: IHostSettings, res: void]
 }
 
-const transceiverFabric = new MessageLib.TransceiverFabric<MessageMap>()
+const messenger = new Messenger<MessageMap>()
 
-export default Object.assign(transceiverFabric.transceiver, {
-  foregroundStart: transceiverFabric.createDispatcher('foregroundStart'),
-  hostPreferencesChanged: transceiverFabric.createDispatcher('hostPreferencesChanged'),
-})
+export default {
+  foregroundStart: messenger.createTypedMessage('foregroundStart'),
+  hostPreferencesChanged: messenger.createTypedMessage('hostPreferencesChanged'),
+}

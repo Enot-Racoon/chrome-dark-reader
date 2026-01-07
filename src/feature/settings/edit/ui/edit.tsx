@@ -1,11 +1,12 @@
 import React from 'react'
 
 import Preferences from 'entities/preferences'
+import type { IPreferences } from 'entities/preferences/types'
 import { Button, Code } from 'shared/ui/components'
 
 import styles from './edit.module.css'
 
-const stringifySetting = (settings: Preferences.IPreferences): string => {
+const stringifySetting = (settings: IPreferences): string => {
   return JSON.stringify(settings, null, 2)
 }
 
@@ -18,7 +19,7 @@ const SettingsEdit: React.FC = () => {
   }, [preferences])
 
   const onSave = () => {
-    update(JSON.parse(settings) as Preferences.IPreferences)
+    update(JSON.parse(settings) as IPreferences)
   }
 
   const onCancel = () => {

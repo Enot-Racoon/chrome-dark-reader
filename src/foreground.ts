@@ -1,5 +1,5 @@
 import Messenger from 'services/messenger'
-import StyleInjector from 'shared/lib/style'
+import * as StyleInjector from 'shared/lib/style'
 
 // Send message on foreground script start
 void Messenger.foregroundStart

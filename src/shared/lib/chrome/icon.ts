@@ -1,6 +1,6 @@
 import Config from 'shared/config'
 
-import Chrome from '../core'
+import Chrome from './core'
 
 export const setIcon = (name: string) => {
   return Chrome.action.setIcon({ path: `${Config.ICON_DIR}/${name}` })
