@@ -1,4 +1,4 @@
-import { useState, useMemo, type FC } from 'react'
+import { useState, useMemo, useEffect, type FC } from 'react'
 import classNames from 'classnames'
 
 import { Button } from '@/shared/ui/button'
@@ -51,6 +51,8 @@ const SettingsEdit: FC = () => {
     }
   }
 
+  const [saveSuccess, setSaveSuccess] = useState(false)
+
   const onSave = () => {
     if (selectedHost && localSettings) {
       update({
@@ -60,8 +62,24 @@ const SettingsEdit: FC = () => {
           [selectedHost]: localSettings,
         },
       })
+      setSaveSuccess(true)
+      setTimeout(() => setSaveSuccess(false), 2000)
     }
   }
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault()
+        onSave()
+      }
+    }
+
+    if (selectedHost) {
+      window.addEventListener('keydown', handleKeyDown)
+      return () => window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [selectedHost, localSettings, preferences])
 
   const onToggleEnabled = () => {
     if (localSettings) {
@@ -142,7 +160,7 @@ const SettingsEdit: FC = () => {
             </div>
             <footer className={styles.controls}>
               <Button disabled={updating} onClick={onSave}>
-                Save Changes
+                {saveSuccess ? 'Saved! ✅' : 'Save Changes'}
               </Button>
               <Button variant="secondary" onClick={() => onSelectHost(selectedHost)}>
                 Reset

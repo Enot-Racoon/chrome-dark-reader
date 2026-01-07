@@ -1,13 +1,12 @@
 import { useMemo, type FC } from 'react'
 import CodeMirror from '@uiw/react-codemirror'
-import { json } from '@codemirror/lang-json'
 import { css } from '@codemirror/lang-css'
 import { ViewUpdate } from '@codemirror/view'
 import { darcula } from '@uiw/codemirror-theme-darcula'
 
 export interface CodeEditorProps {
   value: string
-  language?: 'json' | 'css'
+  language?: 'css'
   onChange?: (value: string, viewUpdate: ViewUpdate) => void
   width?: string
   height?: string
@@ -15,7 +14,7 @@ export interface CodeEditorProps {
 
 export const CodeEditor: FC<CodeEditorProps> = ({
   value,
-  language = 'json',
+  language = 'css',
   onChange,
   width,
   height,
@@ -24,9 +23,8 @@ export const CodeEditor: FC<CodeEditorProps> = ({
     switch (language) {
       case 'css':
         return [css()]
-      case 'json':
       default:
-        return [json()]
+        return []
     }
   }, [language])
 
