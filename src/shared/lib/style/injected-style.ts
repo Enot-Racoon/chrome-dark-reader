@@ -9,14 +9,17 @@ export const toggleAdditionalStyles = (enabled: boolean, styles = '') => {
     return
   }
 
-  if (!styleEl) {
-    const htmlEl = document.documentElement
+  const htmlEl = document.documentElement
+  if (!htmlEl) return
 
-    if (htmlEl) {
-      styleEl = document.createElement('style')
-      styleEl.id = 'dark-reader-style'
-      htmlEl.appendChild(styleEl)
-    }
+  // Clear critical styles set by background script
+  htmlEl.style.backgroundColor = ''
+  htmlEl.style.filter = ''
+
+  if (!styleEl) {
+    styleEl = document.createElement('style')
+    styleEl.id = 'dark-reader-style'
+    htmlEl.appendChild(styleEl)
   }
 
   const invertValue = enabled ? 0.95 : 0
