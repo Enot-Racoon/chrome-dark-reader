@@ -5,9 +5,9 @@ import {
   createStore,
   combine,
   sample,
-} from 'shared/lib/store/effector'
-import type * as Chrome from 'shared/types/chrome'
-import type { IStorageRecord } from 'shared/lib/storage'
+} from '@/shared/lib/store/effector'
+import type * as Chrome from '@/shared/types/chrome'
+import type { IStorageRecord } from '@/shared/lib/storage'
 
 import type { IPreferences, IHostSettings } from './types'
 

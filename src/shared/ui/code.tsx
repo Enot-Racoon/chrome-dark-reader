@@ -1,4 +1,4 @@
-import React from 'react'
+import type { FC } from 'react'
 import CodeMirror from '@uiw/react-codemirror'
 import { json } from '@codemirror/lang-json'
 import { ViewUpdate } from '@codemirror/view'
@@ -11,7 +11,7 @@ export interface CodeProps {
   height?: string
 }
 
-export const Code: React.FC<CodeProps> = ({ value, onChange, width, height }) => (
+export const Code: FC<CodeProps> = ({ value, onChange, width, height }) => (
   <CodeMirror
     value={value}
     extensions={[json()]}

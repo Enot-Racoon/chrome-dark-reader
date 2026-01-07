@@ -1,11 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
-import * as Preferences from 'entities/preferences'
-import Messenger from 'services/messenger'
-import * as Chrome from 'shared/lib/chrome'
-import * as Utils from 'shared/lib/common'
-
-// const Logger = Utils.createLogger('background.ts')
+import * as Preferences from '@/entities/preferences/model'
+import Messenger from '@/services/messenger'
+import * as Chrome from '@/shared/lib/chrome'
 
 const ICON_MAP = {
   enabled: 'enabled.png',
@@ -18,7 +13,7 @@ const onAppIconClick = (tab: Chrome.Type.Tab) => {
   void Preferences.iconClicked(tab)
 }
 
-const onTabActivate = (activateInfo: Chrome.Type.Tab.ActiveTabInfo) => {
+const onTabActivate = () => {
   void Chrome.getActiveTab().then(tab => {
     void (tab && Preferences.tabActivated(tab))
   })
@@ -72,7 +67,7 @@ const watchStoreChanges = () => {
     if (activeTab?.id && activeTabPreferences) {
       void Messenger.hostPreferencesChanged
         .dispatchToTab(activeTab.id, activeTabPreferences)
-        .catch(Utils.warn('Tab preferences was updated'))
+        .catch(() => console.warn('Tab preferences was updated'))
     }
 
     return activeTabPreferences
@@ -80,7 +75,7 @@ const watchStoreChanges = () => {
 }
 
 const listenForeground = () => {
-  Messenger.foregroundStart.setListener(host => {
+  Messenger.foregroundStart.setListener((host: string) => {
     return Preferences.preferences
       .map(({ hosts }) => hosts[host] ?? Preferences.createDefaultHostSettings(host))
       .getState()

@@ -1,11 +1,11 @@
-import * as Chrome from 'shared/lib/chrome'
-import type { IStorageConnector, IStorageMappedListener, IStorageMappedEvent } from '../types'
+import * as Chrome from '@/shared/lib/chrome'
+import type { IStorageConnector, IStorageMappedListener, IStorageMappedEvent } from './types'
 
 export class ChromeStorageConnector<T> implements IStorageConnector<T> {
   private readonly storage = Chrome.storage.local
   private readonly listenerMap = new Map<
     IStorageMappedListener<T>,
-    (changes: Record<string, any>) => void
+    (changes: Record<string, Chrome.Type.StorageChange>, areaName: string) => void
   >()
 
   readonly get = async (key: string): Promise<T | null> => {
@@ -19,7 +19,11 @@ export class ChromeStorageConnector<T> implements IStorageConnector<T> {
   }
 
   readonly addChangeListener = (key: string, listener: IStorageMappedListener<T>): void => {
-    const wrappedListener = (changes: Record<string, Chrome.Type.StorageChange>) => {
+    const wrappedListener = (
+      changes: Record<string, Chrome.Type.StorageChange>,
+      areaName: string
+    ) => {
+      if (areaName !== 'local') return
       const change = changes[key]
       if (change) {
         const event: IStorageMappedEvent<T> = {
@@ -31,13 +35,13 @@ export class ChromeStorageConnector<T> implements IStorageConnector<T> {
       }
     }
     this.listenerMap.set(listener, wrappedListener)
-    this.storage.onChanged.addListener(wrappedListener)
+    Chrome.storage.onChanged.addListener(wrappedListener)
   }
 
   readonly removeChangeListener = (key: string, listener: IStorageMappedListener<T>): void => {
     const wrappedListener = this.listenerMap.get(listener)
     if (wrappedListener) {
-      this.storage.onChanged.removeListener(wrappedListener)
+      Chrome.storage.onChanged.removeListener(wrappedListener)
       this.listenerMap.delete(listener)
     }
   }

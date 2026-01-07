@@ -1,5 +1,5 @@
-import { Messenger } from '../../shared/lib/chrome/message'
-import type { IHostSettings } from 'entities/preferences'
+import { Messenger } from '@/shared/lib/chrome/message'
+import type { IHostSettings } from '@/entities/preferences/types'
 
 export type MessageMap = {
   foregroundStart: [host: string, preferences: IHostSettings]

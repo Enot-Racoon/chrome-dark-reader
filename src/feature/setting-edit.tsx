@@ -1,20 +1,21 @@
-import React from 'react'
+import { useState, useEffect, type FC } from 'react'
 
-import Preferences from 'entities/preferences'
-import type { IPreferences } from 'entities/preferences/types'
-import { Button, Code } from 'shared/ui/components'
+import { Code } from '@/shared/ui/code'
+import { Button } from '@/shared/ui/button'
+import * as Preferences from '@/entities/preferences/model'
+import type { IPreferences } from '@/entities/preferences/types'
 
-import styles from './edit.module.css'
+import styles from './setting-edit.module.css'
 
 const stringifySetting = (settings: IPreferences): string => {
   return JSON.stringify(settings, null, 2)
 }
 
-const SettingsEdit: React.FC = () => {
+const SettingsEdit: FC = () => {
   const { preferences, loading, updating, update } = Preferences.use()
-  const [settings, setSettings] = React.useState(stringifySetting(preferences))
+  const [settings, setSettings] = useState(stringifySetting(preferences))
 
-  React.useEffect(() => {
+  useEffect(() => {
     setSettings(stringifySetting(preferences))
   }, [preferences])
 

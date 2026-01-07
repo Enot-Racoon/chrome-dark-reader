@@ -1,6 +1,8 @@
+import { type IHostSettings } from '@/entities/preferences/types'
+
 let styleEl: HTMLStyleElement
 
-export const toggleTabStyle = (tab: { enabled: boolean; styles: string }) => {
+export const toggleTabStyle = (tab: IHostSettings | { enabled: boolean; styles: string }) => {
   if (tab) toggleAdditionalStyles(tab.enabled, tab.styles)
 }
 

@@ -1,6 +1,6 @@
-import Config from 'shared/config'
-import * as ModelLib from 'shared/lib/store'
-import StorageLib from 'shared/lib/storage'
+import Config from '@/shared/config'
+import * as ModelLib from '@/shared/lib/store/effector'
+import StorageLib from '@/shared/lib/storage'
 
 import * as lib from './lib'
 import type * as Type from './types'
@@ -30,6 +30,6 @@ export const use = () =>
     update,
   })
 
-export const useGate = (props?: any) => ModelLib.useGate(gate, props)
+export const useGate = (props?: Record<string, unknown>) => ModelLib.useGate(gate, props)
 
 export const data = stores

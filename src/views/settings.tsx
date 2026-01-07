@@ -1,5 +1,4 @@
-import React from 'react'
-import SettingsEdit from 'feature/settings/edit'
+import SettingsEdit from '@/feature/setting-edit'
 
 import styles from './settings.module.css'
 

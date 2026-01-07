@@ -1,20 +1,18 @@
-import React from 'react'
+import { StrictMode, type ComponentType } from 'react'
 import ReactDOM from 'react-dom/client'
-
-import Layout from 'shared/ui/layouts'
-
+import AppProvider from './provider'
 import './base.css'
 
-export default function App(View: React.ComponentType) {
+export default function App(View: ComponentType) {
   const rootElement = window.document.createElement('div')
   rootElement.id = 'chrome-dark-reader'
   window.document.body.appendChild(rootElement)
   const root = ReactDOM.createRoot(rootElement)
   root.render(
-    <React.StrictMode>
-      <Layout>
+    <StrictMode>
+      <AppProvider>
         <View />
-      </Layout>
-    </React.StrictMode>
+      </AppProvider>
+    </StrictMode>
   )
 }

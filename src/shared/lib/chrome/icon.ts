@@ -1,4 +1,4 @@
-import Config from 'shared/config'
+import Config from '@/shared/config'
 
 import Chrome from './core'
 

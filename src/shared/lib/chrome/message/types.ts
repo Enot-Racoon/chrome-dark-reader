@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type * as Chrome from 'shared/types/chrome'
+import type * as Chrome from '@/shared/types/chrome'
 
 export type MessageSignature<Payload, Response> = [Payload, Response]
 
