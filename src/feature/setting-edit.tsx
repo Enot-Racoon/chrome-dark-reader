@@ -11,6 +11,7 @@ import styles from './setting-edit.module.css'
 const SettingsEdit: FC = () => {
   const { preferences, loading, updating, update } = Preferences.use()
   const [selectedHost, setSelectedHost] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
 
   // Local state for the currently edited host settings
   const [localSettings, setLocalSettings] = useState<IHostSettings | null>(null)
@@ -18,6 +19,13 @@ const SettingsEdit: FC = () => {
   const hosts = useMemo(() => {
     return Object.keys(preferences.hosts).sort()
   }, [preferences.hosts])
+
+  const filteredHosts = useMemo(() => {
+    if (!searchQuery.trim()) return hosts
+    return hosts.filter(host =>
+      host.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  }, [hosts, searchQuery])
 
   const onSelectHost = (host: string) => {
     setSelectedHost(host)
@@ -133,9 +141,21 @@ const SettingsEdit: FC = () => {
             +
           </Button>
         </div>
+        <div style={{ padding: '0.5rem', borderBottom: '1px solid #ccc' }}>
+          <input
+            type="text"
+            placeholder="Search hotsname..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className={styles.search}
+          />
+        </div>
         <div className={styles.hostList}>
           {hosts.length === 0 && <div className={styles.emptyState}>No sites configured</div>}
-          {hosts.map(host => (
+          {filteredHosts.length === 0 && searchQuery.trim() && (
+            <div className={styles.emptyState}>No sites found matching "{searchQuery}"</div>
+          )}
+          {filteredHosts.map(host => (
             <div
               key={host}
               className={classNames(styles.hostItem, {

@@ -23,6 +23,26 @@
   align-items: center;
 }
 
+.search {
+  /* 
+  {
+      width: '100%',
+        padding: '0.5rem',
+        border: '1px solid #ccc',
+        borderRadius: '4px',
+        fontSize: '14px'
+    }
+  */
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  outline: none;
+  background-color: var(--color-header);
+  color: var(--color-bg);
+}
+
 .hostList {
   flex: 1;
   overflow-y: auto;

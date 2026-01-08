@@ -1,6 +1,7 @@
 :root {
   --color-bg: #0f172a;
   --color-text: #b4c7ef;
+  --color-header: #f1f5f9;
   --color-primary: #38bdf8;
   --color-primary-hover: #7dd3fc;
   --color-secondary: #334155;
@@ -35,5 +36,5 @@ h5,
 h6 {
   margin: 0;
   font-weight: 700;
-  color: #f1f5f9;
+  color: var(--color-header);
 }

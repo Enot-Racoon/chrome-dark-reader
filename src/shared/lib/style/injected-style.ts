@@ -38,8 +38,8 @@ export const toggleAdditionalStyles = (enabled: boolean, styles = '') => {
   color-scheme: ${enabled ? 'dark' : 'light'};
 }
 
-:where(body) {
-  background-color: var(--dr-bg-color) !important;
+:where(html) {
+  background-color: var(--dr-bg-color);
   filter: invert(var(--dr-invert)) hue-rotate(var(--dr-hue));
   transition: filter var(--dr-transition), background-color var(--dr-transition);
 }
