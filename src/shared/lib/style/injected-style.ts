@@ -30,6 +30,11 @@ export const toggleAdditionalStyles = (enabled: boolean, styles = '') => {
 
   // Using textContent for security and CSS variables for flexible updates
   styleEl.textContent = `
+@layer base {
+  :where(body) {
+    color: black;
+  }
+}
 :root {
   --dr-invert: ${invertValue};
   --dr-hue: ${hueValue}deg;
