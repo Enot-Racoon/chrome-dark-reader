@@ -38,42 +38,23 @@ export const toggleAdditionalStyles = (enabled: boolean, styles = '') => {
   color-scheme: ${enabled ? 'dark' : 'light'};
 }
 
-:where(html) {
-  background-color: var(--dr-bg-color);
-  filter: invert(var(--dr-invert)) hue-rotate(var(--dr-hue));
-  transition: filter var(--dr-transition), background-color var(--dr-transition);
+html, 
+iframe {
+  transition-duration: 0.3s;
+  transition-timing-function: ease-out;
+  transition-property: filter background-color;
+  /* background-color: var(--dr-bg-color); */
+  filter: invert(var(--dr-invert)) hue-rotate(var(--dr-hue)); 
 }
 
-/* Revert inversion for media elements to preserve original colors */
 img,
 picture,
-video,
-canvas,
-[style*="background-image"],
-[style*="background: url"],
-svg:not(:root) {
-  filter: invert(var(--dr-invert)) hue-rotate(calc(var(--dr-hue) * -1)) !important;
-  transition: filter var(--dr-transition);
+video {
+  filter: invert(var(--dr-invert)) hue-rotate(var(--dr-hue)); 
 }
 
-/* Fix for nested elements and special cases */
 picture img {
-  filter: none !important;
-}
-
-/* Darker scrollbars and native elements */
-::-webkit-scrollbar {
-  background-color: #2a2a2a;
-  color: #c5c5c5;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: #454545;
-}
-
-iframe {
-  transition: filter var(--dr-transition);
-  filter: invert(var(--dr-invert)) hue-rotate(var(--dr-hue));
+  filter: none;
 }
 
 ${styles}
