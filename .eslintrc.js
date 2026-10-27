@@ -14,7 +14,17 @@ module.exports = {
     'prettier',
     'plugin:prettier/recommended',
   ],
-  overrides: [],
+  overrides: [
+    {
+      // test/fakes mirror the chrome API surface: its methods resolve without awaiting,
+      // and reassigning them in a test is the point, not a scoping mistake
+      files: ['test/**/*.ts'],
+      rules: {
+        '@typescript-eslint/require-await': 'off',
+        '@typescript-eslint/unbound-method': 'off',
+      },
+    },
+  ],
   parser: '@typescript-eslint/parser',
   settings: {
     react: {
