@@ -11,6 +11,7 @@
 # production
 /build
 /extension.zip
+*.tsbuildinfo
 
 # misc
 .DS_Store
@@ -36,3 +37,5 @@ yarn.lock
 .env
 src/index.tsx
 scripts/webpack-entries.js
+
+.qoder/
