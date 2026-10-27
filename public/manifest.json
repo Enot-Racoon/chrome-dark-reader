@@ -21,6 +21,7 @@
       "js": [
         "src/foreground.ts"
       ],
+      "css": [],
       "matches": [
         "http://*/*",
         "https://*/*",
@@ -34,10 +35,20 @@
     "tabs",
     "activeTab",
     "scripting",
-    "storage"
+    "storage",
+    "contextMenus"
   ],
   "host_permissions": [
     "<all_urls>"
   ],
-  "version": "1.0.0.4888"
+  "version": "1.0.0.4896",
+  "commands": {
+    "toggle-dark-mode": {
+      "suggested_key": {
+        "default": "Alt+Shift+D",
+        "mac": "MacCtrl+Shift+D"
+      },
+      "description": "Toggle dark mode for the current site"
+    }
+  }
 }

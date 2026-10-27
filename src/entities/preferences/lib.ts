@@ -8,10 +8,11 @@ import {
 } from '@/shared/lib/store/effector'
 import type * as Chrome from '@/shared/types/chrome'
 import type { IStorageRecord } from '@/shared/lib/storage'
+import { getHostFromUrl, matchHostSettings } from './host'
 
 import type { IPreferences, IHostSettings } from './types'
 
-export const getTabHost = ({ url }: Chrome.Tab): string => (url ? new URL(url).host : '')
+export const getTabHost = ({ url }: Chrome.Tab): string => getHostFromUrl(url) ?? ''
 
 export const createDefaultHostSettings = (
   host: string,
@@ -21,6 +22,13 @@ export const createDefaultHostSettings = (
 
 export const createModel = (record: IStorageRecord<IPreferences>) => {
   const gate = createGate()
+
+  // A click during start-up must not reach storage: the store still holds defaults, and
+  // sending them would replace the configuration the record is about to load.
+  let hydrated = false
+  void record.ready.then(() => {
+    hydrated = true
+  })
 
   // Events
   const initialize = createEvent<void>()
@@ -33,8 +41,10 @@ export const createModel = (record: IStorageRecord<IPreferences>) => {
   const disable = setEnabled.prepend((host: string) => [host, false])
   const toggle = setEnabled.prepend((host: string) => [host, null])
 
+  const patchHost = createEvent<[host: string, settings: IHostSettings]>()
+  const removeHost = createEvent<string>()
+
   const tabActivated = createEvent<Chrome.Tab>()
-  const iconClicked = toggle.prepend<Chrome.Tab>(getTabHost)
 
   // Effects
   const loadFx = createEffect<void, IPreferences>(record.get)
@@ -46,7 +56,7 @@ export const createModel = (record: IStorageRecord<IPreferences>) => {
 
   const activeTabPreferences = combine(activeTab, preferences, (tab, { hosts }) => {
     const host = tab ? getTabHost(tab) : ''
-    return hosts[host] ?? createDefaultHostSettings(host)
+    return matchHostSettings(hosts, host) ?? createDefaultHostSettings(host)
   })
 
   // Logic
@@ -75,7 +85,8 @@ export const createModel = (record: IStorageRecord<IPreferences>) => {
   preferences.on(setEnabled, (state, [host, enabled]) => {
     if (!host) return state
 
-    const hostState = state.hosts[host] ?? createDefaultHostSettings(host)
+    // A wildcard entry is inherited by the exact host that is being switched.
+    const hostState = matchHostSettings(state.hosts, host) ?? createDefaultHostSettings(host)
     const nextEnabled = enabled === null ? !hostState.enabled : enabled
 
     return {
@@ -84,21 +95,42 @@ export const createModel = (record: IStorageRecord<IPreferences>) => {
         ...state.hosts,
         [host]: {
           ...hostState,
+          host,
           enabled: nextEnabled,
         },
       },
     }
   })
 
-  // Sync with store
+  preferences.on(patchHost, (state, [host, settings]) => {
+    if (!host) return state
+
+    return {
+      ...state,
+      hosts: {
+        ...state.hosts,
+        [host]: { ...settings, host },
+      },
+    }
+  })
+
+  preferences.on(removeHost, (state, host) => {
+    if (!(host in state.hosts)) return state
+
+    const hosts = { ...state.hosts }
+    delete hosts[host]
+
+    return { ...state, hosts }
+  })
+
+  // Sync with storage. The record turns this into per-host writes only.
   sample({
     clock: preferences.updates,
+    filter: () => hydrated,
     target: updateFx,
   })
 
-  record.addChangeListener(({ newValue }) => {
-    if (newValue) update(newValue)
-  })
+  record.addChangeListener(({ newValue }) => update(newValue))
 
   return {
     gate,
@@ -111,8 +143,9 @@ export const createModel = (record: IStorageRecord<IPreferences>) => {
       enable,
       disable,
       toggle,
+      patchHost,
+      removeHost,
       tabActivated,
-      iconClicked,
     },
     effects: {
       load: loadFx,

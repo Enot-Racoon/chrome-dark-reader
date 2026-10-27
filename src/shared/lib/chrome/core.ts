@@ -1,3 +1,3 @@
-export const { tabs, runtime, action, storage, scripting } = chrome
+export const { tabs, runtime, action, storage, scripting, commands, contextMenus } = chrome
 
-export default { tabs, runtime, action, storage, scripting }
+export default { tabs, runtime, action, storage, scripting, commands, contextMenus }
