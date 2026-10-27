@@ -4,12 +4,13 @@ import classNames from 'classnames'
 import { Button } from '@/shared/ui/button'
 import { CodeEditor } from '@/shared/ui/codeEditor'
 import * as Preferences from '@/entities/preferences/model'
+import { normalizeHost } from '@/entities/preferences/host'
 import type { IHostSettings } from '@/entities/preferences/types'
 
 import styles from './setting-edit.module.css'
 
 const SettingsEdit: FC = () => {
-  const { preferences, loading, updating, update } = Preferences.use()
+  const { preferences, loading, updating, setEnabled, patchHost, removeHost } = Preferences.use()
   const [selectedHost, setSelectedHost] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -22,14 +23,12 @@ const SettingsEdit: FC = () => {
 
   const filteredHosts = useMemo(() => {
     if (!searchQuery.trim()) return hosts
-    return hosts.filter(host =>
-      host.toLowerCase().includes(searchQuery.toLowerCase())
-    )
+    return hosts.filter(host => host.toLowerCase().includes(searchQuery.toLowerCase()))
   }, [hosts, searchQuery])
 
   const onSelectHost = (host: string) => {
     setSelectedHost(host)
-    setLocalSettings({ ...preferences.hosts[host] })
+    setLocalSettings({ ...preferences.hosts[host], host })
   }
 
   // Sync local state when global preferences change (e.g. after toggle enabled)
@@ -46,25 +45,23 @@ const SettingsEdit: FC = () => {
   }, [preferences.hosts, selectedHost])
 
   const onAddHost = () => {
-    const host = window.prompt('Enter host (e.g. google.com or *.google.com):')
-    if (host && !preferences.hosts[host]) {
-      const newSettings = Preferences.createDefaultHostSettings(host)
-      update({
-        ...preferences,
-        hosts: {
-          ...preferences.hosts,
-          [host]: newSettings,
-        },
-      })
-      onSelectHost(host)
+    const typed = window.prompt('Enter host (e.g. google.com or *.google.com for subdomains):')
+    if (!typed) return
+
+    const host = normalizeHost(typed)
+
+    if (!host) {
+      window.alert(`"${typed}" is not a valid hostname`)
+      return
     }
+
+    if (!preferences.hosts[host]) patchHost([host, Preferences.createDefaultHostSettings(host)])
+    onSelectHost(host)
   }
 
   const onDeleteHost = (host: string) => {
     if (window.confirm(`Delete settings for ${host}?`)) {
-      const nextHosts = { ...preferences.hosts }
-      delete nextHosts[host]
-      update({ ...preferences, hosts: nextHosts })
+      removeHost(host)
       if (selectedHost === host) {
         setSelectedHost(null)
         setLocalSettings(null)
@@ -76,13 +73,7 @@ const SettingsEdit: FC = () => {
 
   const onSave = () => {
     if (selectedHost && localSettings) {
-      update({
-        ...preferences,
-        hosts: {
-          ...preferences.hosts,
-          [selectedHost]: localSettings,
-        },
-      })
+      patchHost([selectedHost, { ...localSettings, host: selectedHost }])
       setSaveSuccess(true)
       setTimeout(() => setSaveSuccess(false), 2000)
     }
@@ -108,16 +99,7 @@ const SettingsEdit: FC = () => {
       // Optimistic update for UI responsiveness
       setLocalSettings({ ...localSettings, enabled: newEnabled })
 
-      update({
-        ...preferences,
-        hosts: {
-          ...preferences.hosts,
-          [selectedHost]: {
-            ...preferences.hosts[selectedHost],
-            enabled: newEnabled,
-          },
-        },
-      })
+      setEnabled([selectedHost, newEnabled])
     }
   }
 
@@ -146,14 +128,16 @@ const SettingsEdit: FC = () => {
             type="text"
             placeholder="Search hotsname..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={e => setSearchQuery(e.target.value)}
             className={styles.search}
           />
         </div>
         <div className={styles.hostList}>
           {hosts.length === 0 && <div className={styles.emptyState}>No sites configured</div>}
           {filteredHosts.length === 0 && searchQuery.trim() && (
-            <div className={styles.emptyState}>No sites found matching "{searchQuery}"</div>
+            <div className={styles.emptyState}>
+              No sites found matching &quot;{searchQuery}&quot;
+            </div>
           )}
           {filteredHosts.map(host => (
             <div
