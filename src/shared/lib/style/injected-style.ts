@@ -31,7 +31,7 @@ export const toggleAdditionalStyles = (enabled: boolean, styles = '') => {
   // Using textContent for security and CSS variables for flexible updates
   styleEl.textContent = `
 @layer base {
-  :where(body) {
+  :root {
     color: black;
   }
 }
@@ -53,6 +53,7 @@ iframe {
 }
 
 img,
+canvas,
 picture,
 video {
   filter: invert(var(--dr-invert)) hue-rotate(var(--dr-hue)); 
