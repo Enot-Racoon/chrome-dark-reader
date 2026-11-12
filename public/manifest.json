@@ -41,7 +41,7 @@
   "host_permissions": [
     "<all_urls>"
   ],
-  "version": "1.0.0.4896",
+  "version": "1.0.0.4904",
   "commands": {
     "toggle-dark-mode": {
       "suggested_key": {
