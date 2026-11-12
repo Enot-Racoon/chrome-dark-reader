@@ -21,19 +21,25 @@ export const toggleAdditionalStyles = (enabled: boolean, styles = '') => {
   if (!styleEl) {
     styleEl = document.createElement('style')
     styleEl.id = 'dark-reader-style'
-    htmlEl.appendChild(styleEl)
+    if (htmlEl.firstChild) htmlEl.firstChild.appendChild(styleEl)
+    else htmlEl.appendChild(styleEl)
   }
 
   const invertValue = enabled ? 0.95 : 0
   const hueValue = enabled ? 180 : 0
   const bgColor = enabled ? '#f2fafa' : 'transparent'
 
+  const rootStyles = !enabled
+    ? ''
+    : `
+:root {
+    color: white;
+  }`
+
   // Using textContent for security and CSS variables for flexible updates
   styleEl.textContent = `
 @layer base {
-  :root {
-    color: black;
-  }
+  ${rootStyles.trim()}
 }
 :root {
   --dr-invert: ${invertValue};
